@@ -37,7 +37,7 @@ log_compdens_conv_mix <- function(g, betahat, errordist) {
     assertthat::are_equal(length(betahat), length(errordist))
 
     pisum <- sapply(errordist, FUN = function(x) { sum(x$pi) })
-    assertthat::assert_that(all(pisum == 1))
+    assertthat::assert_that(all(abs(pisum - 1) < 10 ^ -14))
 
     ## make sure error distribution doesn't have point mass on zero
     if (class_e == "normalmix") {
@@ -368,7 +368,7 @@ post_mix_dist <- function(g, betahat, errordist) {
     assertthat::are_equal(length(betahat), length(errordist))
 
     pisum <- sapply(errordist, FUN = function(x) { sum(x$pi) })
-    assertthat::assert_that(all(pisum == 1))
+    assertthat::assert_that(all(abs(pisum - 1) < 10 ^ -14))
 
     ## make sure error distribution doesn't have point mass on zero
     if (class_e == "normalmix") {
