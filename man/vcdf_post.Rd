@@ -27,7 +27,7 @@ vectorized version of \code{\link{cdf_post}}
 beta = rnorm(100,0,1)
 betahat= beta+rnorm(100,0,1)
 sebetahat=rep(1,100)
-ash.beta = ash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
-c = vcdf_post(ash.beta$fitted.g,seq(-5,5,length=1000),betahat,sebetahat,NULL)
+stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
+c = vcdf_post(stramash.beta$fitted.g,seq(-5,5,length=1000),betahat,sebetahat,NULL)
 }
 

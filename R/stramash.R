@@ -1,6 +1,9 @@
 # avoid "no visible binding for global variable" note in CRAN check
 # These variables are actually defined in process_args
-if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinput","sebetahat.orig","excludeindex"))
+if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs",
+                                                       "controlinput",
+                                                       "sebetahat.orig",
+                                                       "excludeindex"))
 
 #' @useDynLib stramash
 #' @import truncnorm SQUAREM doParallel pscl Rcpp foreach parallel
@@ -16,12 +19,18 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinp
 #'     beta.
 #'
 #' @details This function is actually just a simple wrapper that
-#'     passes its parameters to \code{\link{ash.workhorse}} which
+#'     passes its parameters to \code{\link{stramash.workhorse}} which
 #'     provides more documented options for advanced use. See readme
 #'     for more details.
 #'
 #' @param betahat a p vector of estimates
 #' @param sebetahat a p vector of corresponding standard errors
+#' @param errordist A list of objects of either class \code{normalmix}
+#'     or \code{unimix}. The length of this list must be the length of
+#'     \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
+#'     distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
+#'     which case \code{stramash.workhorse} will assume either a
+#'     normal or t likelihood, depending on the value for \code{df}.
 #' @param mixcompdist distribution of components in mixture
 #'     ("uniform","halfuniform" or "normal"; "+uniform" or
 #'     "-uniform"), the default is "uniform". If you believe your
@@ -32,9 +41,9 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinp
 #'     betahat/sebetahat, default is NULL which is actually treated as
 #'     infinity (Gaussian)
 #' @param ... Further arguments to be passed to
-#'     \code{\link{ash.workhorse}}.
+#'     \code{\link{stramash.workhorse}}.
 #'
-#' @return ash returns an object of \code{\link[base]{class}} "ash", a list with some or all of the following elements (determined by outputlevel) \cr
+#' @return stramash returns an object of \code{\link[base]{class}} "stramash", a list with some or all of the following elements (determined by outputlevel) \cr
 #' \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 #' \item{loglik}{log P(D|mle(pi))}
 #' \item{logLR}{log[P(D|mle(pi))/P(D|beta==0)]}
@@ -52,30 +61,37 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinp
 #' \item{optmethod}{the optimization method used}
 #' \item{data}{a list consisting the input betahat and sebetahat (only included if outputlevel>2)}
 #'
-#' @seealso \code{\link{ash.workhorse}} for complete specification of ash function
-#' @seealso \code{\link{ashci}} for computation of credible intervals after getting the ash object return by \code{ash()}
-#' @seealso \code{\link{ashm}} for Multi-model Adaptive Shrinkage function
+#' @seealso \code{\link{stramash.workhorse}} for complete specification of
+#'     stramash function
+#' @seealso \code{\link{stramashci}} for computation of credible intervals
+#'     after getting the stramash object return by \code{stramash()}
+#' @seealso \code{\link{stramashm}} for Multi-model Adaptive Shrinkage
+#'     function
 #'
 #' @export
 #' @examples
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
-#' summary(beta.ash)
-#' names(beta.ash)
-#' graphics::plot(betahat,beta.ash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
+#' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
+#' summary(beta.stramash)
+#' names(beta.stramash)
+#' graphics::plot(betahat,beta.stramash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
 #'
-#' CIMatrix=ashci(beta.ash,level=0.95)
+#' CIMatrix=stramashci(beta.stramash,level=0.95)
 #' print(CIMatrix)
 #'
 #' #Illustrating the non-zero mode feature
 #' betahat=betahat+5
-#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
-#' graphics::plot(betahat,beta.ash$PosteriorMean)
-#' summary(beta.ash)
-ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal","+uniform","-uniform"),df=NULL,...){
-  return(modifyList(ash.workhorse(betahat,sebetahat,mixcompdist=mixcompdist,df=df,...),list(call=match.call())))
+#' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
+#' graphics::plot(betahat,beta.stramash$PosteriorMean)
+#' summary(beta.stramash)
+stramash = function(betahat, errordist = NULL, sebetahat = NULL,
+               mixcompdist = c("uniform", "halfuniform", "normal", "+uniform", "-uniform"),
+               df = NULL,...){
+  return(modifyList(stramash.workhorse(betahat, sebetahat,
+                                  mixcompdist = mixcompdist, df = df,
+                                  ...), list(call = match.call())))
 }
 
 
@@ -84,8 +100,8 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #' @description Takes vectors of estimates (betahat) and their
 #'     standard errors (sebetahat), and applies shrinkage to them,
 #'     using Empirical Bayes methods, to compute shrunk estimates for
-#'     beta. This is the more detailed version of ash for "research"
-#'     use.  Most users will be happy with the ash function, which
+#'     beta. This is the more detailed version of stramash for "research"
+#'     use.  Most users will be happy with the stramash function, which
 #'     provides the same usage, but documents only the main options
 #'     for simplicity.
 #'
@@ -93,7 +109,7 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #'
 #' @param betahat a p vector of estimates
 #' @param sebetahat a p vector of corresponding standard errors
-#' @param method specifies how ash is to be run. Can be "shrinkage"
+#' @param method specifies how stramash is to be run. Can be "shrinkage"
 #'     (if main aim is shrinkage) or "fdr" (if main aim is to assess
 #'     fdr or fsr) This is simply a convenient way to specify certain
 #'     combinations of parameters: "shrinkage" sets pointmass=FALSE
@@ -160,13 +176,13 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #'     or \code{unimix}. The length of this list must be the length of
 #'     \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
 #'     distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-#'     which case \code{ash.workhorse} will assume either a normal or
+#'     which case \code{stramash.workhorse} will assume either a normal or
 #'     t likelihood, depending on the value for \code{df}.
 #' @param likelihood One of the pre-specified likelihoods available.
 #' @param gridsize The size of the grid if you are using one of the
 #'     pre-specified likelihoods.
 #'
-#' @return ash returns an object of \code{\link[base]{class}} "ash", a list
+#' @return stramash returns an object of \code{\link[base]{class}} "stramash", a list
 #' with some or all of the following elements (determined by outputlevel) \cr
 #' \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 #' \item{loglik}{log P(D|mle(pi))}
@@ -187,11 +203,11 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #' \item{data}{a list consisting the input betahat and sebetahat (only included if outputlevel>2)}
 #' \item{fit}{a list containing results of mixture optimization, and matrix of component log-likelihoods used in this optimization}
 #'
-#' @seealso \code{\link{ash}} for simplified specification of ash
+#' @seealso \code{\link{stramash}} for simplified specification of stramash
 #'     function
-#' @seealso \code{\link{ashci}} for computation of credible intervals
-#'     after getting the ash object return by \code{ash()}
-#' @seealso \code{\link{ashm}} for Multi-model Adaptive Shrinkage
+#' @seealso \code{\link{stramashci}} for computation of credible intervals
+#'     after getting the stramash object return by \code{stramash()}
+#' @seealso \code{\link{stramashm}} for Multi-model Adaptive Shrinkage
 #'     function
 #'
 #' @export
@@ -199,32 +215,32 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
-#' names(beta.ash)
-#' summary(beta.ash)
-#' head(as.data.frame(beta.ash))
-#' graphics::plot(betahat,beta.ash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
+#' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
+#' names(beta.stramash)
+#' summary(beta.stramash)
+#' head(as.data.frame(beta.stramash))
+#' graphics::plot(betahat,beta.stramash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
 #'
-#' CIMatrix=ashci(beta.ash,betahat,sebetahat,level=0.95)
+#' CIMatrix=stramashci(beta.stramash,betahat,sebetahat,level=0.95)
 #' print(CIMatrix)
 #'
 #' #Testing the non-zero mode feature
 #' betahat=betahat+5
-#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
-#' graphics::plot(betahat,beta.ash$PosteriorMean)
-#' summary(beta.ash)
-#' 
+#' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
+#' graphics::plot(betahat,beta.stramash$PosteriorMean)
+#' summary(beta.stramash)
+#'
 #' #'
-#' #Running ash with a pre-specified g, rather than estimating it
+#' #Running stramash with a pre-specified g, rather than estimating it
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
 #' true_g = normalmix(c(0.5,0.5),c(0,0),c(0,1)) # define true g
-#' ## Passing this g into ash causes it to
+#' ## Passing this g into stramash causes it to
 #' ## i) take the sd and the means for each component from this g, and
 #' ## ii) initialize pi to the value from this g.
-#' beta.ash = ash.workhorse(betahat = betahat, sebetahat =  sebetahat,g=true_g,fixg=TRUE)
-ash.workhorse = function(betahat, errordist = NULL, sebetahat = NULL,
+#' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat =  sebetahat,g=true_g,fixg=TRUE)
+stramash.workhorse = function(betahat, errordist = NULL, sebetahat = NULL,
                          likelihood = c("normal", "t"),
                          gridsize = 100,
                          method = c("fdr", "shrink"),
@@ -466,7 +482,7 @@ ash.workhorse = function(betahat, errordist = NULL, sebetahat = NULL,
                                                              sebetahat = sebetahat,
                                                              df = df)))}
     if (outputlevel > 2) {result=c(result,list(fit = pi.fit))}
-    class(result) = "ash"
+    class(result) = "stramash"
     return(result)
 }
 
@@ -547,7 +563,7 @@ gradient = function(matrix_lik){
 #'     algorithm, default value is set to be control.default=list(K =
 #'     1, method=3, square=TRUE, step.min0=1, step.max0=1, mstep=4,
 #'     kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE).
-#' @inheritParams ash.workhorse
+#' @inheritParams stramash.workhorse
 #' @return A list, including the final loglikelihood, the null loglikelihood, a n by k likelihoodmatrix with (j,k)th element equal to \eqn{f_k(x_j)},and a flag to indicate convergence.
 #
 #prior gives the parameter of a Dirichlet prior on pi

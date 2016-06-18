@@ -2,7 +2,7 @@
 # These variables are actually defined in process_args
 if(getRversion() >= "2.15.1") utils::globalVariables(c("VB","cxx","method","model","mixcompdist","gridmult","control"))
 
-#' Process input arguments for ash.workhorse
+#' Process input arguments for stramash.workhorse
 #'
 #' @param oldargs captured argument list
 #' @return list containing the processed arguments

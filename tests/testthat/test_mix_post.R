@@ -178,7 +178,7 @@ test_that("mix_mean_array.truncnormalmix_array is stable", {
         errordist[[index]] <- t_to_mix(mu = 0, sig = sig[index], df = df, gridsize = 70)
     }
 
-    mixout <- ash.workhorse(betahat = y, errordist = errordist)
+    mixout <- stramash.workhorse(betahat = y, errordist = errordist)
 
     expect_true(!any(is.na(mixout$PosteriorMean)))
 }

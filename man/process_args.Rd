@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_args.R
 \name{process_args}
 \alias{process_args}
-\title{Process input arguments for ash.workhorse}
+\title{Process input arguments for stramash.workhorse}
 \usage{
 process_args(oldargs)
 }
@@ -13,6 +13,6 @@ process_args(oldargs)
 list containing the processed arguments
 }
 \description{
-Process input arguments for ash.workhorse
+Process input arguments for stramash.workhorse
 }
 

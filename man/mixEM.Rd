@@ -24,9 +24,9 @@ Given the individual component likelihoods for a mixture model, estimates the mi
 }
 \details{
 Fits a k component mixture model \deqn{f(x|\pi)= \sum_k \pi_k f_k(x)} to independent
-and identically distributed data \eqn{x_1,\dots,x_n}. 
-Estimates mixture proportions \eqn{\pi} by maximum likelihood, or by maximum a posteriori (MAP) estimation for a Dirichlet prior on \eqn{\pi} 
-(if a prior is specified).  Uses the SQUAREM package to accelerate convergence of EM. Used by the ash main function; there is no need for a user to call this 
+and identically distributed data \eqn{x_1,\dots,x_n}.
+Estimates mixture proportions \eqn{\pi} by maximum likelihood, or by maximum a posteriori (MAP) estimation for a Dirichlet prior on \eqn{\pi}
+(if a prior is specified).  Uses the SQUAREM package to accelerate convergence of EM. Used by the stramash main function; there is no need for a user to call this
 function separately, but it is exported for convenience.
 }
 

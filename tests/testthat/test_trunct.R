@@ -1,5 +1,8 @@
+library(stramash)
+context("Truncated t")
+
 test_that("my_e2trunct matches simulations", {
-  x = rt(1000000,df=4)
+  x = rt(1000000, df = 4)
   expect_equal(mean(x[abs(x)<1]^2),my_e2trunct(-1,1,4),tolerance=0.01)
 })
 
@@ -21,9 +24,9 @@ test_that("comp_postmean2 is 0 for null", {
     expect_equal(comp_postmean2(unimix(1,0,0),z,rep(1,10),v=NULL),matrix(0,10,nrow=1))
     expect_equal(comp_postmean2(unimix(1,0,0),z,rep(1,10),v=4), matrix(0,10,nrow=1))
     expect_equal(comp_postmean2(normalmix(1,0,0),z,rep(1,10),v=NULL),matrix(0,10,nrow=1))
-    z.ash = ash(z,1,df=4,g=unimix(1,0,0),fixg=TRUE)
-    expect_equal(z.ash$PosteriorSD,rep(0,10))
-    expect_equal(z.ash$PosteriorMean,rep(0,10))
+    z.stramash = stramash(z,1,df=4,g=unimix(1,0,0),fixg=TRUE)
+    expect_equal(z.stramash$PosteriorSD,rep(0,10))
+    expect_equal(z.stramash$PosteriorMean,rep(0,10))
 })
 
 test_that("comp_postmean2.unimix matches simulations", {
@@ -42,20 +45,20 @@ test_that("comp_postmean2.unimix matches simulations", {
 test_that("posterior means and sds computed for unimix from very flat prior are correct", {
   set.seed(1); z = rnorm(10,0,2); s=rgamma(10,10,10)
   #fit under t likelihood
-  z.ash=ash.workhorse(betahat = z,sebetahat = s,df=5,g=unimix(c(0.5,0.5),c(-100,-20),c(100,20)),fixg=TRUE, likelihood = "t")
-  expect_equal(z.ash$PosteriorSD,s*sd(rt(1000000,df=5)),tolerance=0.01)
+  z.stramash=stramash.workhorse(betahat = z,sebetahat = s,df=5,g=unimix(c(0.5,0.5),c(-100,-20),c(100,20)),fixg=TRUE, likelihood = "t")
+  expect_equal(z.stramash$PosteriorSD,s*sd(rt(1000000,df=5)),tolerance=0.01)
   #now do normal version
-  z.ash=ash.workhorse(betahat = z,sebetahat = s,df=NULL,g=unimix(c(0.5,0.5),c(-100,-20),c(100,20)),fixg=TRUE)
-  expect_equal(z.ash$PosteriorSD,s,tolerance=0.01)
+  z.stramash=stramash.workhorse(betahat = z,sebetahat = s,df=NULL,g=unimix(c(0.5,0.5),c(-100,-20),c(100,20)),fixg=TRUE)
+  expect_equal(z.stramash$PosteriorSD,s,tolerance=0.01)
 })
 
 test_that("posterior means and sds computed for unimix from NAs match prior mean and sd", {
     skip("missing data not implemented yet")
   set.seed(1); z = c(NA,rnorm(10,0,2)); s=c(rgamma(10,10,10),NA)
-  z.ash=ash.workhorse(betahat = z, sebetahat = s,df=5,g=unimix(c(0.5,0.5),c(-100,-20),c(100,20)),fixg=TRUE, likelihood = "t")
+  z.stramash=stramash.workhorse(betahat = z, sebetahat = s,df=5,g=unimix(c(0.5,0.5),c(-100,-20),c(100,20)),fixg=TRUE, likelihood = "t")
   priorsd = sd(c(runif(1000000,-100,100),runif(1000000,-20,20)))
-  expect_equal(z.ash$PosteriorMean[1],0)
-  expect_equal(z.ash$PosteriorMean[11],0)
-  expect_equal(z.ash$PosteriorSD[1],priorsd,tolerance=0.01)
-  expect_equal(z.ash$PosteriorSD[11],priorsd,tolerance=0.01)
+  expect_equal(z.stramash$PosteriorMean[1],0)
+  expect_equal(z.stramash$PosteriorMean[11],0)
+  expect_equal(z.stramash$PosteriorSD[1],priorsd,tolerance=0.01)
+  expect_equal(z.stramash$PosteriorSD[11],priorsd,tolerance=0.01)
 })

@@ -338,8 +338,8 @@ comppostprob.default = function(m,x,s,v){
 #' beta = rnorm(100,0,1)
 #' betahat= beta+rnorm(100,0,1)
 #' sebetahat=rep(1,100)
-#' ash.beta = ash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
-#' compcdf_post(ash.beta$fitted.g,0,betahat,sebetahat,NULL)
+#' stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
+#' compcdf_post(stramash.beta$fitted.g,0,betahat,sebetahat,NULL)
 #' @export
 compcdf_post=function(m,c,betahat,sebetahat,v){
   UseMethod("compcdf_post")
@@ -363,9 +363,9 @@ compcdf_post.default=function(m,c,betahat,sebetahat,v){
 #' beta = rnorm(100,0,1)
 #' betahat= beta+rnorm(100,0,1)
 #' sebetahat=rep(1,100)
-#' ash.beta = ash.workhorse(betahat = betahat, sebetahat = sebetahat,mixcompdist="normal")
-#' cdf0 = cdf_post(ash.beta$fitted.g,0,betahat,sebetahat,NULL)
-#' graphics::plot(cdf0,1-ash.beta$PositiveProb)
+#' stramash.beta = stramash.workhorse(betahat = betahat, sebetahat = sebetahat,mixcompdist="normal")
+#' cdf0 = cdf_post(stramash.beta$fitted.g,0,betahat,sebetahat,NULL)
+#' graphics::plot(cdf0,1-stramash.beta$PositiveProb)
 #' @export
 cdf_post = function(m,c,betahat,sebetahat,v){
   UseMethod("cdf_post")
@@ -386,8 +386,8 @@ cdf_post.default=function(m,c,betahat,sebetahat,v){
 #' beta = rnorm(100,0,1)
 #' betahat= beta+rnorm(100,0,1)
 #' sebetahat=rep(1,100)
-#' ash.beta = ash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
-#' c = vcdf_post(ash.beta$fitted.g,seq(-5,5,length=1000),betahat,sebetahat,NULL)
+#' stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
+#' c = vcdf_post(stramash.beta$fitted.g,seq(-5,5,length=1000),betahat,sebetahat,NULL)
 #' @export
 vcdf_post = function(m,c,betahat,sebetahat,v){
   mapply(cdf_post,c,MoreArgs=list(m=m,betahat=betahat,sebetahat=sebetahat,v=v))
@@ -404,8 +404,8 @@ vcdf_post = function(m,c,betahat,sebetahat,v){
 #' beta = rnorm(100,0,1)
 #' betahat= beta+rnorm(100,0,1)
 #' sebetahat=rep(1,100)
-#' ash.beta = ash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
-#' c = pcdf_post(ash.beta$fitted.g,beta,betahat,sebetahat,NULL)
+#' stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
+#' c = pcdf_post(stramash.beta$fitted.g,beta,betahat,sebetahat,NULL)
 #' @export
 pcdf_post = function(m,c,betahat,sebetahat,v){
   mapply(cdf_post,c,betahat,sebetahat,MoreArgs=list(m=m,v=v))
@@ -514,10 +514,10 @@ comp_postmean.default = function(m,betahat,sebetahat,v){
 #' @examples
 #' beta = rnorm(100,0,1)
 #' betahat= beta+rnorm(100,0,1)
-#' ash.beta = ash.workhorse(betahat = betahat,sebetahat = rep(1, 100),mixcompdist="normal")
-#' comp_postmean(ash.beta$fitted.g,betahat,rep(1,100),NULL)
-#' comp_postsd(ash.beta$fitted.g,betahat,rep(1,100),NULL)
-#' comppostprob(ash.beta$fitted.g,betahat,rep(1,100),NULL)
+#' stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = rep(1, 100),mixcompdist="normal")
+#' comp_postmean(stramash.beta$fitted.g,betahat,rep(1,100),NULL)
+#' comp_postsd(stramash.beta$fitted.g,betahat,rep(1,100),NULL)
+#' comppostprob(stramash.beta$fitted.g,betahat,rep(1,100),NULL)
 #' @export
 comp_postsd = function(m, betahat,sebetahat,v){
   UseMethod("comp_postsd")

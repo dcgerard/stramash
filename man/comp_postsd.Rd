@@ -22,9 +22,9 @@ output posterior sd for beta for each component of
 \examples{
 beta = rnorm(100,0,1)
 betahat= beta+rnorm(100,0,1)
-ash.beta = ash.workhorse(betahat = betahat,sebetahat = rep(1, 100),mixcompdist="normal")
-comp_postmean(ash.beta$fitted.g,betahat,rep(1,100),NULL)
-comp_postsd(ash.beta$fitted.g,betahat,rep(1,100),NULL)
-comppostprob(ash.beta$fitted.g,betahat,rep(1,100),NULL)
+stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = rep(1, 100),mixcompdist="normal")
+comp_postmean(stramash.beta$fitted.g,betahat,rep(1,100),NULL)
+comp_postsd(stramash.beta$fitted.g,betahat,rep(1,100),NULL)
+comppostprob(stramash.beta$fitted.g,betahat,rep(1,100),NULL)
 }
 

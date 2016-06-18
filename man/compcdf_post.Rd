@@ -29,7 +29,7 @@ evaluate cdf of posterior distribution of beta at c. m
 beta = rnorm(100,0,1)
 betahat= beta+rnorm(100,0,1)
 sebetahat=rep(1,100)
-ash.beta = ash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
-compcdf_post(ash.beta$fitted.g,0,betahat,sebetahat,NULL)
+stramash.beta = stramash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
+compcdf_post(stramash.beta$fitted.g,0,betahat,sebetahat,NULL)
 }
 

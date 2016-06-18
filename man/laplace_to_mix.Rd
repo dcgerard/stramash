@@ -15,7 +15,7 @@ laplace_to_mix(mu, sig, gridsize = 20)
 \item{gridsize}{The number of mixture components to use. The larger
 the more accurate the approximation, but the higher the
 computational load --- especially if you intend to use this for
-\code{\link{ash.workhorse}}.}
+\code{\link{stramash.workhorse}}.}
 }
 \description{
 This is based on the representation of the Laplace distribution as

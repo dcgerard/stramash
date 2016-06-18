@@ -1,43 +1,43 @@
 
-################################## ASH UTILITY FUNCTIONS ############################
+################################## STRAMASH UTILITY FUNCTIONS ############################
 
-#' @title Summary method for ash object
+#' @title Summary method for stramash object
 #'
-#' @description Print summary of fitted ash object
+#' @description Print summary of fitted stramash object
 #'
 #' @details \code{\link{summary}} prints the fitted mixture, the
 #'     fitted log likelihood with 10 digits and a flag to indicate
 #'     convergence
-#' @param object the fitted ash object
+#' @param object the fitted stramash object
 #' @param ... not used, included for consistency as an S3
 #'     generic/method.
 #'
 #' @export
 #'
-summary.ash=function(object,...){
+summary.stramash=function(object,...){
   print(object$fitted.g)
   print(utils::tail(object$fit$loglik,1),digits=10)
   print(object$fit$converged)
 }
 
-#' @title Create data from from ash object
+#' @title Create data from from stramash object
 #'
 #' @description Creates data frame for easy plotting of results etc
 #'
 #' @details Returns a data frame with named columnns
-#' @param x the fitted ash object
+#' @param x the fitted stramash object
 #' @param row.names NULL or a character vector giving the row names for the data frame. Missing values are not allowed.
 #' @param optional not used, included for consistency as an S3 generic/method
 #' @param ... not used, included for consistency as an S3
 #'     generic/method.
 #'
 #' @examples
-#' a = ash.workhorse(betahat = rnorm(100,0,2),sebetahat = rep(1, 100))
+#' a = stramash.workhorse(betahat = rnorm(100,0,2),sebetahat = rep(1, 100))
 #' head(as.data.frame(a))
-#' 
+#'
 #' @export
-as.data.frame.ash=function(x,row.names=NULL,optional=FALSE,...){
-  if(is.null(x$lfsr)){stop("Can't make data.frame from ash object unless outputlevel>=1.5")}
+as.data.frame.stramash=function(x,row.names=NULL,optional=FALSE,...){
+  if(is.null(x$lfsr)){stop("Can't make data.frame from stramash object unless outputlevel>=1.5")}
   if(is.null(row.names)){row.names=1:length(x$lfsr)}
   df = data.frame(row.names=row.names)
 
@@ -57,27 +57,27 @@ as.data.frame.ash=function(x,row.names=NULL,optional=FALSE,...){
   return(df)
 }
 
-#' @title Print method for ash object
+#' @title Print method for stramash object
 #'
 #' @description Print the fitted distribution of beta values in the EB
 #'     hierarchical model
 #'
 #' @details None
-#' @param x the fitted ash object
+#' @param x the fitted stramash object
 #' @param ... not used, included for consistency as an S3
 #'     generic/method.
 #'
 #' @export
 #'
-print.ash =function(x,...){
+print.stramash =function(x,...){
   print(x$fitted.g)
 }
 
-#' @title Plot method for ash object
+#' @title Plot method for stramash object
 #'
 #' @description Plot the cdf of the underlying fitted distribution
 #'
-#' @param x the fitted ash object
+#' @param x the fitted stramash object
 #' @param ... Arguments to be passed to methods,such as graphical parameters (see \code{\link[graphics]{plot}})
 #' @param xmin xlim lower range, default is the lowest value of betahat
 #' @param xmax xlim upper range, default is the highest value of betahat
@@ -85,16 +85,16 @@ print.ash =function(x,...){
 #'
 #' @export
 #'
-plot.ash = function(x,...,xmin,xmax){
+plot.stramash = function(x,...,xmin,xmax){
   if(missing(xmin)){xmin=min(x$data$betahat)}
   if(missing(xmax)){xmax=max(x$data$betahat)}
   xgrid = seq(xmin,xmax,length=1000)
-  y = cdf.ash(x,xgrid)
+  y = cdf.stramash(x,xgrid)
   graphics::plot(y,type="l",...)
 }
 
 #compute the predictive density of an observation
-#given the fitted ash object a and the vector se of standard errors
+#given the fitted stramash object a and the vector se of standard errors
 #not implemented yet
 #todo
 predictive=function(a,se){
@@ -102,12 +102,12 @@ predictive=function(a,se){
 }
 
 
-#' @title Get fitted loglikelihood for ash object
+#' @title Get fitted loglikelihood for stramash object
 #'
 #' @description Return the log-likelihood of the data under the fitted
 #'     distribution
 #'
-#' @param a the fitted ash object
+#' @param a the fitted stramash object
 #'
 #' @details None
 #'
@@ -118,11 +118,11 @@ get_loglik = function(a){
   return(a$loglik)
 }
 
-#' @title Get pi0 estimate for ash object
+#' @title Get pi0 estimate for stramash object
 #'
 #' @description Return estimate of the null proportion, pi0
 #'
-#' @param a the fitted ash object
+#' @param a the fitted stramash object
 #'
 #' @details Extracts the estimate of the null proportion, pi0, from
 #'     the object a
@@ -134,13 +134,13 @@ get_pi0 = function(a){
   return(sum(a$fitted.g$pi[null.comp]))
 }
 
-#' @title Compute loglikelihood for data from ash fit
+#' @title Compute loglikelihood for data from stramash fit
 #'
 #' @description Return the log-likelihood of the data betahat, with
 #'     standard errors betahatsd, for a given g() prior on beta, or an
-#'     ash object containing that
+#'     stramash object containing that
 #'
-#' @param g the fitted g, or an ash object containing g
+#' @param g the fitted g, or an stramash object containing g
 #' @param betahat the data
 #' @param betahatsd the observed standard errors
 #' @param df appropriate degrees of freedom for (t) distribution of
@@ -165,14 +165,14 @@ calc_loglik = function(g,betahat,betahatsd,df,model=c("EE","ET"),alpha=0){
 
   if(missing(alpha)){
     model = match.arg(model)
-    if(class(g)=="ash" && g$model != model){
-      warning("Model used to fit ash does not match model used to compute loglik! Probably you have made a mistake!")
+    if(class(g)=="stramash" && g$model != model){
+      warning("Model used to fit stramash does not match model used to compute loglik! Probably you have made a mistake!")
     }
     if(model=="ET"){ alpha=1
     } else {alpha=0}
   }
 
-  if(class(g)=="ash"){g = g$fitted.g} #extract g object from ash object if ash object passed
+  if(class(g)=="stramash"){g = g$fitted.g} #extract g object from stramash object if stramash object passed
 
 
   return(loglik_conv(g,betahat/(betahatsd^alpha),betahatsd^(1-alpha),df)-alpha*sum(log(betahatsd)))
@@ -208,14 +208,14 @@ calc_null_loglik = function(betahat,betahatsd,df,model=c("EE","ET"),alpha=0){
   #return(calc_loglik(g,betahat,betahatsd,df,model,alpha))
 }
 
-#' @title Compute loglikelihood ratio for data from ash fit
+#' @title Compute loglikelihood ratio for data from stramash fit
 #'
 #' @description Return the log-likelihood ratio of the data betahat,
 #'     with standard errors betahatsd, for a given g() prior on beta,
-#'     or an ash object containing that, vs the null that g() is point
+#'     or an stramash object containing that, vs the null that g() is point
 #'     mass on 0
 #'
-#' @param g the fitted g, or an ash object containing g
+#' @param g the fitted g, or an stramash object containing g
 #' @param betahat the data
 #' @param betahatsd the observed standard errors
 #' @param df appropriate degrees of freedom for (t) distribution of
@@ -236,13 +236,13 @@ calc_logLR = function(g,betahat,betahatsd,df,model=c("EE","ET"),alpha=0){
   return(calc_loglik(g,betahat,betahatsd,df,model,alpha) - calc_null_loglik(betahat,betahatsd,df,model,alpha))
 }
 
-#' @title Compute vector of loglikelihood for data from ash fit
+#' @title Compute vector of loglikelihood for data from stramash fit
 #'
 #' @description Return the vector of log-likelihoods of the data
 #'     betahat, with standard errors betahatsd, for a given g() prior
-#'     on beta, or an ash object containing that
+#'     on beta, or an stramash object containing that
 #'
-#' @param g the fitted g, or an ash object containing g
+#' @param g the fitted g, or an stramash object containing g
 #' @param betahat the data
 #' @param betahatsd the observed standard errors
 #' @param df appropriate degrees of freedom for (t) distribution of
@@ -267,14 +267,14 @@ calc_vloglik = function(g,betahat,betahatsd,df,model=c("EE","ET"),alpha=0){
 
   if(missing(alpha)){
     model = match.arg(model)
-    if(class(g)=="ash" && g$model != model){
-      warning("Model used to fit ash does not match model used to compute loglik! Probably you have made a mistake!")
+    if(class(g)=="stramash" && g$model != model){
+      warning("Model used to fit stramash does not match model used to compute loglik! Probably you have made a mistake!")
     }
     if(model=="ET"){ alpha=1
     } else {alpha=0}
   }
 
-  if(class(g)=="ash"){g = g$fitted.g} #extract g object from ash object if ash object passed
+  if(class(g)=="stramash"){g = g$fitted.g} #extract g object from stramash object if stramash object passed
 
 
   return(log(
@@ -314,14 +314,14 @@ calc_null_vloglik = function(betahat,betahatsd,df,model=c("EE","ET"),alpha=0){
   #return(calc_loglik(g,betahat,betahatsd,df,model,alpha))
 }
 
-#' @title Compute vector of loglikelihood ratio for data from ash fit
+#' @title Compute vector of loglikelihood ratio for data from stramash fit
 #'
 #' @description Return the vector of log-likelihood ratios of the data
 #'     betahat, with standard errors betahatsd, for a given g() prior
-#'     on beta, or an ash object containing that, vs the null that g()
+#'     on beta, or an stramash object containing that, vs the null that g()
 #'     is point mass on 0
 #'
-#' @param g the fitted g, or an ash object containing g
+#' @param g the fitted g, or an stramash object containing g
 #' @param betahat the data
 #' @param betahatsd the observed standard errors
 #' @param df appropriate degrees of freedom for (t) distribution of
@@ -343,11 +343,11 @@ calc_vlogLR = function(g,betahat,betahatsd,df,model=c("EE","ET"),alpha=0){
 }
 
 
-#' @title Density method for ash object
+#' @title Density method for stramash object
 #'
 #' @description Return the density of the underlying fitted distribution
 #'
-#' @param a the fitted ash object
+#' @param a the fitted stramash object
 #' @param x the vector of locations at which density is to be computed
 #'
 #' @details None
@@ -360,18 +360,18 @@ get_density=function(a,x){
 }
 
 
-#' @title cdf method for ash object
+#' @title cdf method for stramash object
 #'
 #' @description Computed the cdf of the underlying fitted distribution
 #'
-#' @param a the fitted ash object
+#' @param a the fitted stramash object
 #' @param x the vector of locations at which cdf is to be computed
 #' @param lower.tail (default=TRUE) whether to compute the lower or upper tail
 #'
 #' @details None
 #'
 #' @export
-cdf.ash=function(a,x,lower.tail=TRUE){
+cdf.stramash=function(a,x,lower.tail=TRUE){
   return(list(x=x,y=mixcdf(a$fitted.g,x,lower.tail)))
 }
 
@@ -398,9 +398,9 @@ toc <- function()
 
 
 
-#' @title Credible Interval Computation for the ash object
+#' @title Credible Interval Computation for the stramash object
 #'
-#' @description Given the ash object return by the main function ash,
+#' @description Given the stramash object return by the main function stramash,
 #'     this function computes the corresponding credible interval of
 #'     the mixture model.
 #'
@@ -408,8 +408,8 @@ toc <- function()
 #'     component-wise credible interval computation. The computation
 #'     cost is linear of the length of betahat.
 #'
-#' @param a the fitted ash object
-#' @param betahat the values of beta used for ash
+#' @param a the fitted stramash object
+#' @param betahat the values of beta used for stramash
 #' @param sebetahat the values of betahat used
 #' @param df the degrees of freedom
 #' @param model the model used.
@@ -447,15 +447,16 @@ toc <- function()
 #' beta = c(rep(0,20),rnorm(20))
 #' sebetahat = abs(rnorm(40,0,1))
 #' betahat = rnorm(40,beta,sebetahat)
-#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
+#' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #'
-#' CImatrix=ashci(beta.ash,betahat,sebetahat,level=0.95)
+#' CImatrix=stramashci(beta.stramash,betahat,sebetahat,level=0.95)
 #' print(CImatrix)
 #' print(CImatrix[order(CImatrix[,2]),]) # Sorted according to the lfsr
 #'
-#' CImatrix1=ashci(beta.ash,betahat,sebetahat,level=0.95,betaindex=c(1,2,5))
-#' CImatrix2=ashci(beta.ash,betahat,sebetahat,level=0.95,lfsrcriteria=0.1)
-#' #CImatrix3=ashci(beta.ash,betahat,sebetahat,level=0.95, betaindex=c(1:length(beta)),ncores=4)
+#' CImatrix1=stramashci(beta.stramash,betahat,sebetahat,level=0.95,betaindex=c(1,2,5))
+#' CImatrix2=stramashci(beta.stramash,betahat,sebetahat,level=0.95,lfsrcriteria=0.1)
+#' #CImatrix3=stramashci(beta.stramash,betahat,sebetahat,level=0.95,
+#'                       #betaindex=c(1:length(beta)),ncores=4)
 #' print(CImatrix1)
 #' print(CImatrix2)
 #' #print(CImatrix3)
@@ -464,8 +465,9 @@ toc <- function()
 #' #beta = c(rep(0,1000),rnorm(1000))
 #' #sebetahat = abs(rnorm(2000,0,1))
 #' #betahat = rnorm(2000,beta,sebetahat)
-#' #beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
-#' #CImatrix4 = ashci(beta.ash,betahat,sebetahat,level=0.95, betaindex=c(1:length(beta)),ncores=4)
+#' #beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
+#' #CImatrix4 = stramashci(beta.stramash,betahat,sebetahat,level=0.95,
+#'                         #betaindex=c(1:length(beta)),ncores=4)
 #todo/issue=> all set!
 #1.Q:Could do parallel computing to reduce the computation time
 #1.A:Done by doParallel
@@ -475,7 +477,7 @@ toc <- function()
 #the searching interval from the mixture
 #2.A:Done by shrinking searching interval using while loop
 #
-ashci = function (a, betahat=NULL, sebetahat=NULL,df=NULL,model=c("EE","ET"),level=0.95,betaindex,lfsrcriteria=0.05,tol=1e-5, maxcounts=100,shrinkingcoefficient=0.9,trace=FALSE,ncores=FALSE){
+stramashci = function (a, betahat=NULL, sebetahat=NULL,df=NULL,model=c("EE","ET"),level=0.95,betaindex,lfsrcriteria=0.05,tol=1e-5, maxcounts=100,shrinkingcoefficient=0.9,trace=FALSE,ncores=FALSE){
   if(missing(betahat)){
       betahat= a$data$betahat
   }
@@ -667,12 +669,12 @@ ci.upper=function(z,m,x,s,level,df){
 #'     \eqn{alpha=0} we have the EE model, when \eqn{alpha=1}, we have
 #'     the ET model. \eqn{alpha} should be in between 0 and 1,
 #'     inclusively. This wrapper function would select the best
-#'     \eqn{alpha} and reports the ash item based on that \eqn{alpha}.
+#'     \eqn{alpha} and reports the stramash item based on that \eqn{alpha}.
 #'
-#' @seealso \code{\link{ash}} the main function that this wrapper
+#' @seealso \code{\link{stramash}} the main function that this wrapper
 #'     function is calling
 #' @details All other inputs are exactly the same as the main function
-#'     ash, and would pass to the main function to evaluate the
+#'     stramash, and would pass to the main function to evaluate the
 #'     likelihood.
 #'
 #' @param betahat  a p vector of estimates
@@ -693,12 +695,12 @@ ci.upper=function(z,m,x,s,level,df){
 #'     use. Further, if user does not specify and
 #'     length(betahat)>50000, then the function would perform parallel
 #'     computation using number of CPU cores on the current host.
-#' @param ... Further arguments to be passed to \code{\link{ash}}.
+#' @param ... Further arguments to be passed to \code{\link{stramash}}.
 #'
-#' @return ashm returns a list of objects
-#' \item{beta.ash}{the best fitted ash object}
+#' @return stramashm returns a list of objects
+#' \item{beta.stramash}{the best fitted stramash object}
 #' \item{loglikvector}{the vector of loglikelihood of various models}
-#' \item{allash}{the fitted ash of various models}
+#' \item{allstramash}{the fitted stramash of various models}
 #'
 
 #' @export
@@ -706,14 +708,14 @@ ci.upper=function(z,m,x,s,level,df){
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' #beta.ashm = ashm(betahat, sebetahat,alpha=6)
-#' #beta.ashm4 = ashm(betahat, sebetahat,alpha=6,ncores=4)
-#' #print(beta.ashm[[1]])  #best ash object
-#' #print(beta.ashm[[2]])  #corresponding model type
-#' #print(beta.ashm[[3]])  #log-likelihood for all models
+#' #beta.stramashm = stramashm(betahat, sebetahat,alpha=6)
+#' #beta.stramashm4 = stramashm(betahat, sebetahat,alpha=6,ncores=4)
+#' #print(beta.stramashm[[1]])  #best stramash object
+#' #print(beta.stramashm[[2]])  #corresponding model type
+#' #print(beta.stramashm[[3]])  #log-likelihood for all models
 #'
 #'
-ashm=function(betahat,sebetahat,
+stramashm=function(betahat,sebetahat,
               mixcompdist = c("uniform","halfuniform","normal","+uniform","-uniform"),
 			  df=NULL, alpha=2,ncores=FALSE,
               ...){
@@ -726,7 +728,7 @@ ashm=function(betahat,sebetahat,
   }
   mixcompdist=match.arg(mixcompdist)
 
-  allash=list()
+  allstramash=list()
   loglikvector=rep(NA,length(alpha))
 
   if(ncores==FALSE){
@@ -735,31 +737,31 @@ ashm=function(betahat,sebetahat,
     for(i in 1:length(alpha)){
       betahati= betahat/(sebetahat^alpha[i])
       sebetahati= sebetahat^(1-alpha[i])
-      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
-      allash[[i]]=beta.ash
-      loglikvector[i]=calc_loglik(beta.ash,betahat,sebetahat,df,alpha=alpha[i])
+      beta.stramash=stramash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      allstramash[[i]]=beta.stramash
+      loglikvector[i]=calc_loglik(beta.stramash,betahat,sebetahat,df,alpha=alpha[i])
     }
     sink()
   } else{
     ##Performing parallel computation
     cl <- makePSOCKcluster(ncores)#This number corresponding to number of workers
     registerDoParallel(cl)
-    allash=foreach(i=1:length(alpha)) %dopar% {
+    allstramash=foreach(i=1:length(alpha)) %dopar% {
       sink("/dev/null")
       betahati= betahat/(sebetahat^alpha[i])
       sebetahati= sebetahat^(1-alpha[i])
-      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      beta.stramash=stramash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
       sink()
-      beta.ash #computation result stored in allash
+      beta.stramash #computation result stored in allstramash
     }
     stopCluster(cl)
     for(i in 1:length(alpha)){
-      loglikvector[i]=calc_loglik(allash[[i]],betahat,sebetahat,df,alpha=alpha[i])
+      loglikvector[i]=calc_loglik(allstramash[[i]],betahat,sebetahat,df,alpha=alpha[i])
     }
   }
 
   modelindex=which.max(loglikvector)
-  beta.ash= allash[[modelindex]]
+  beta.stramash= allstramash[[modelindex]]
   model=alpha[modelindex]
   if(model==0){
     model="EE"
@@ -768,8 +770,8 @@ ashm=function(betahat,sebetahat,
   } else{
     model=model
   }
-  beta.ash[["model"]]=model
-  return(list(bestash = beta.ash, model=model,loglikevector = loglikvector,allash = allash))
+  beta.stramash[["model"]]=model
+  return(list(beststramash = beta.stramash, model=model,loglikevector = loglikvector,allstramash = allstramash))
 }
 
 
@@ -779,13 +781,13 @@ ashm=function(betahat,sebetahat,
 #'     \eqn{mu} and then consider the model \eqn{betahat_j - mu ~
 #'     g()},and eqn{beta_j ~ N(0,sebetahat^2) or student t
 #'     distribution}. \eqn{mu} should be a grid of mu,this wrapper
-#'     function would select the best \eqn{mu} and reports the ash
+#'     function would select the best \eqn{mu} and reports the stramash
 #'     item based on that \eqn{mu}.
 #'
-#' @seealso \code{\link{ash}} the main function that this wrapper
+#' @seealso \code{\link{stramash}} the main function that this wrapper
 #'     function is calling
 #' @details All other inputs are exactly the same as the main function
-#'     ash, and would pass to the main function to evaluate the
+#'     stramash, and would pass to the main function to evaluate the
 #'     likelihood.
 #'
 #' @param betahat a p vector of estimates
@@ -805,13 +807,13 @@ ashm=function(betahat,sebetahat,
 #'     use. Further, if user does not specify and
 #'     length(betahat)>50000, then the function would perform parallel
 #'     computation using number of CPU cores on the current host.
-#' @param ... Further arguments to be passed to \code{\link{ash}}.
+#' @param ... Further arguments to be passed to \code{\link{stramash}}.
 #'
-#' @return ashm returns a list of objects \item{beta.ash}{the best
-#'     fitted ash object} \item{BestMode}{the best fitted mode, note
+#' @return stramashm returns a list of objects \item{beta.stramash}{the best
+#'     fitted stramash object} \item{BestMode}{the best fitted mode, note
 #'     that all models are fitted with betahat subtracting the
 #'     corresponding mode} \item{loglikvector}{the vector of
-#'     loglikelihood of various models} \item{allash}{the fitted ash
+#'     loglikelihood of various models} \item{allstramash}{the fitted stramash
 #'     of various models}
 #'
 #' @export
@@ -819,14 +821,14 @@ ashm=function(betahat,sebetahat,
 #' beta = c(rep(0,100),rnorm(100))+0.2
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' #beta.ashn = ashn(betahat, sebetahat,mu=20)
-#' #beta.ashn4 = ashn(betahat, sebetahat,mu=20,ncores=4)
-#' #print(beta.ashn[[1]])  #best ash object
-#' #print(beta.ashn[[2]])  #corresponding mode (0 or some other values)
-#' #print(beta.ashn[[3]])  #log-likelihood for all models
+#' #beta.stramashn = stramashn(betahat, sebetahat,mu=20)
+#' #beta.stramashn4 = stramashn(betahat, sebetahat,mu=20,ncores=4)
+#' #print(beta.stramashn[[1]])  #best stramash object
+#' #print(beta.stramashn[[2]])  #corresponding mode (0 or some other values)
+#' #print(beta.stramashn[[3]])  #log-likelihood for all models
 #'
 #'
-ashn=function(betahat,sebetahat,
+stramashn=function(betahat,sebetahat,
               mixcompdist = c("uniform","halfuniform","normal","+uniform","-uniform"),
 			  df=NULL, mu=20,ncores=FALSE,
               ...){
@@ -842,7 +844,7 @@ ashn=function(betahat,sebetahat,
 
   mixcompdist = match.arg(mixcompdist)
 
-  allash=list()
+  allstramash=list()
   loglikvector=rep(NA,length(mu))
 
   if(ncores==FALSE){
@@ -851,32 +853,32 @@ ashn=function(betahat,sebetahat,
     for(i in 1:length(mu)){
       betahati= betahat-mu[i]
       sebetahati= sebetahat
-      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
-      allash[[i]]=beta.ash
-      loglikvector[i]=calc_loglik(beta.ash,betahati,sebetahati,df)
+      beta.stramash=stramash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      allstramash[[i]]=beta.stramash
+      loglikvector[i]=calc_loglik(beta.stramash,betahati,sebetahati,df)
     }
     sink()
   } else{
     ##Performing parallel computation
     cl <- makePSOCKcluster(ncores)#This number corresponding to number of workers
     registerDoParallel(cl)
-    allash=foreach(i=1:length(mu)) %dopar% {
+    allstramash=foreach(i=1:length(mu)) %dopar% {
       sink("/dev/null")
       betahati= betahat-mu[i]
       sebetahati= sebetahat
-      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      beta.stramash=stramash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
       sink()
-      beta.ash #computation result stored in allash
+      beta.stramash #computation result stored in allstramash
     }
     stopCluster(cl)
     for(i in 1:length(mu)){
-      loglikvector[i]=calc_loglik(allash[[i]],betahati,sebetahati,df)
+      loglikvector[i]=calc_loglik(allstramash[[i]],betahati,sebetahati,df)
     }
   }
 
   modelindex=which.max(loglikvector)
-  beta.ash=allash[[modelindex]]
+  beta.stramash=allstramash[[modelindex]]
   BestMode=mu[modelindex]
 
-  return(list(bestash = beta.ash, BestMode=BestMode,loglikevector = loglikvector,allash = allash))
+  return(list(beststramash = beta.stramash, BestMode=BestMode,loglikevector = loglikvector,allstramash = allstramash))
 }

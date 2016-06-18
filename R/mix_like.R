@@ -886,7 +886,7 @@ calc_nulllik_array <- function(betahat, errordist) {
 #' @param gridsize The number of mixture components to use. The larger
 #'     the more accurate the approximation, but the higher the
 #'     computational load --- especially if you intend to use this for
-#'     \code{\link{ash.workhorse}}.
+#'     \code{\link{stramash.workhorse}}.
 #'
 #' @export
 #'
@@ -922,7 +922,7 @@ t_to_mix <- function(mu, sig, df, gridsize = 20) {
 #' @param gridsize The number of mixture components to use. The larger
 #'     the more accurate the approximation, but the higher the
 #'     computational load --- especially if you intend to use this for
-#'     \code{\link{ash.workhorse}}.
+#'     \code{\link{stramash.workhorse}}.
 #'
 #' @export
 #'

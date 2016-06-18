@@ -1,5 +1,5 @@
 library(stramash)
-context("\nMixNormLikelihood")
+context("MixNormLikelihood")
 
 test_that("estimate_mixprop correctly handles mixtures of normals likelihood", {
     p <- 10
