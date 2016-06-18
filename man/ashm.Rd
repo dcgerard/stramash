@@ -58,11 +58,11 @@ All other inputs are exactly the same as the main function
 beta = c(rep(0,100),rnorm(100))
 sebetahat = abs(rnorm(200,0,1))
 betahat = rnorm(200,beta,sebetahat)
-beta.ashm = ashm(betahat, sebetahat,alpha=6)
+#beta.ashm = ashm(betahat, sebetahat,alpha=6)
 #beta.ashm4 = ashm(betahat, sebetahat,alpha=6,ncores=4)
-print(beta.ashm[[1]])  #best ash object
-print(beta.ashm[[2]])  #corresponding model type
-print(beta.ashm[[3]])  #log-likelihood for all models
+#print(beta.ashm[[1]])  #best ash object
+#print(beta.ashm[[2]])  #corresponding model type
+#print(beta.ashm[[3]])  #log-likelihood for all models
 
 
 }

@@ -27,7 +27,7 @@ an n vector, whose ith element is the cdf for beta_i at c_i
 beta = rnorm(100,0,1)
 betahat= beta+rnorm(100,0,1)
 sebetahat=rep(1,100)
-ash.beta = ash(betahat,1,mixcompdist="normal")
+ash.beta = ash.workhorse(betahat = betahat,sebetahat = sebetahat,mixcompdist="normal")
 c = pcdf_post(ash.beta$fitted.g,beta,betahat,sebetahat,NULL)
 }
 

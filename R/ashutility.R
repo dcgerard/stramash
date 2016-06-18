@@ -32,7 +32,7 @@ summary.ash=function(object,...){
 #'     generic/method.
 #'
 #' @examples
-#' a = ash(rnorm(100,0,2),1)
+#' a = ash.workhorse(betahat = rnorm(100,0,2),sebetahat = rep(1, 100))
 #' head(as.data.frame(a))
 #' 
 #' @export
@@ -447,7 +447,7 @@ toc <- function()
 #' beta = c(rep(0,20),rnorm(20))
 #' sebetahat = abs(rnorm(40,0,1))
 #' betahat = rnorm(40,beta,sebetahat)
-#' beta.ash = ash(betahat, sebetahat)
+#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #'
 #' CImatrix=ashci(beta.ash,betahat,sebetahat,level=0.95)
 #' print(CImatrix)
@@ -464,7 +464,7 @@ toc <- function()
 #' #beta = c(rep(0,1000),rnorm(1000))
 #' #sebetahat = abs(rnorm(2000,0,1))
 #' #betahat = rnorm(2000,beta,sebetahat)
-#' #beta.ash = ash(betahat, sebetahat)
+#' #beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #' #CImatrix4 = ashci(beta.ash,betahat,sebetahat,level=0.95, betaindex=c(1:length(beta)),ncores=4)
 #todo/issue=> all set!
 #1.Q:Could do parallel computing to reduce the computation time
@@ -706,11 +706,11 @@ ci.upper=function(z,m,x,s,level,df){
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' beta.ashm = ashm(betahat, sebetahat,alpha=6)
+#' #beta.ashm = ashm(betahat, sebetahat,alpha=6)
 #' #beta.ashm4 = ashm(betahat, sebetahat,alpha=6,ncores=4)
-#' print(beta.ashm[[1]])  #best ash object
-#' print(beta.ashm[[2]])  #corresponding model type
-#' print(beta.ashm[[3]])  #log-likelihood for all models
+#' #print(beta.ashm[[1]])  #best ash object
+#' #print(beta.ashm[[2]])  #corresponding model type
+#' #print(beta.ashm[[3]])  #log-likelihood for all models
 #'
 #'
 ashm=function(betahat,sebetahat,
@@ -735,7 +735,7 @@ ashm=function(betahat,sebetahat,
     for(i in 1:length(alpha)){
       betahati= betahat/(sebetahat^alpha[i])
       sebetahati= sebetahat^(1-alpha[i])
-      beta.ash=ash(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
       allash[[i]]=beta.ash
       loglikvector[i]=calc_loglik(beta.ash,betahat,sebetahat,df,alpha=alpha[i])
     }
@@ -748,7 +748,7 @@ ashm=function(betahat,sebetahat,
       sink("/dev/null")
       betahati= betahat/(sebetahat^alpha[i])
       sebetahati= sebetahat^(1-alpha[i])
-      beta.ash=ashr::ash(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
       sink()
       beta.ash #computation result stored in allash
     }
@@ -819,11 +819,11 @@ ashm=function(betahat,sebetahat,
 #' beta = c(rep(0,100),rnorm(100))+0.2
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' beta.ashn = ashn(betahat, sebetahat,mu=20)
+#' #beta.ashn = ashn(betahat, sebetahat,mu=20)
 #' #beta.ashn4 = ashn(betahat, sebetahat,mu=20,ncores=4)
-#' print(beta.ashn[[1]])  #best ash object
-#' print(beta.ashn[[2]])  #corresponding mode (0 or some other values)
-#' print(beta.ashn[[3]])  #log-likelihood for all models
+#' #print(beta.ashn[[1]])  #best ash object
+#' #print(beta.ashn[[2]])  #corresponding mode (0 or some other values)
+#' #print(beta.ashn[[3]])  #log-likelihood for all models
 #'
 #'
 ashn=function(betahat,sebetahat,
@@ -851,7 +851,7 @@ ashn=function(betahat,sebetahat,
     for(i in 1:length(mu)){
       betahati= betahat-mu[i]
       sebetahati= sebetahat
-      beta.ash=ash(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
       allash[[i]]=beta.ash
       loglikvector[i]=calc_loglik(beta.ash,betahati,sebetahati,df)
     }
@@ -864,7 +864,7 @@ ashn=function(betahat,sebetahat,
       sink("/dev/null")
       betahati= betahat-mu[i]
       sebetahati= sebetahat
-      beta.ash=ashr::ash(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
+      beta.ash=ash.workhorse(betahati, sebetahati, mixcompdist=mixcompdist,df=df,model="EE",...)
       sink()
       beta.ash #computation result stored in allash
     }

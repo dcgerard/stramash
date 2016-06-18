@@ -867,7 +867,7 @@ calc_loglik_array <- function(g, betahat, errordist) {
 #'
 #' @inheritParams log_compdens_conv_mix
 calc_nulllik_array <- function(betahat, errordist) {
-    g <- ashr::normalmix(pi = 1, mean = 0, sd = 0)
+    g <- normalmix(pi = 1, mean = 0, sd = 0)
     matrix_llik <- log_compdens_conv_mix(g, betahat, errordist)
     return(sum(matrix_llik))
 }

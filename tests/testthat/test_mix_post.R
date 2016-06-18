@@ -1,4 +1,4 @@
-library(ashr)
+library(stramash)
 context("Postcalc for Mixlike")
 
 test_that("post_mix_dist.normalnormal", {

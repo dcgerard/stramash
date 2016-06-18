@@ -2,7 +2,7 @@
 # These variables are actually defined in process_args
 if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinput","sebetahat.orig","excludeindex"))
 
-#' @useDynLib ashr
+#' @useDynLib stramash
 #' @import truncnorm SQUAREM doParallel pscl Rcpp foreach parallel
 #
 #
@@ -61,7 +61,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinp
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' beta.ash = ash(betahat, sebetahat)
+#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #' summary(beta.ash)
 #' names(beta.ash)
 #' graphics::plot(betahat,beta.ash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
@@ -71,12 +71,9 @@ if(getRversion() >= "2.15.1") utils::globalVariables(c("completeobs","controlinp
 #'
 #' #Illustrating the non-zero mode feature
 #' betahat=betahat+5
-#' beta.ash = ash(betahat, sebetahat)
+#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #' graphics::plot(betahat,beta.ash$PosteriorMean)
 #' summary(beta.ash)
-#' betan.ash=ash(betahat, sebetahat,nonzeromode=TRUE)
-#' graphics::plot(betahat, betan.ash$PosteriorMean)
-#' summary(betan.ash)
 ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal","+uniform","-uniform"),df=NULL,...){
   return(modifyList(ash.workhorse(betahat,sebetahat,mixcompdist=mixcompdist,df=df,...),list(call=match.call())))
 }
@@ -166,7 +163,7 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #'     which case \code{ash.workhorse} will assume either a normal or
 #'     t likelihood, depending on the value for \code{df}.
 #' @param likelihood One of the pre-specified likelihoods available.
-#' @param gridisize The size of the grid if you are using one of the
+#' @param gridsize The size of the grid if you are using one of the
 #'     pre-specified likelihoods.
 #'
 #' @return ash returns an object of \code{\link[base]{class}} "ash", a list
@@ -202,7 +199,7 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
 #' betahat = rnorm(200,beta,sebetahat)
-#' beta.ash = ash(betahat, sebetahat)
+#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #' names(beta.ash)
 #' summary(beta.ash)
 #' head(as.data.frame(beta.ash))
@@ -213,13 +210,11 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #'
 #' #Testing the non-zero mode feature
 #' betahat=betahat+5
-#' beta.ash = ash(betahat, sebetahat)
+#' beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #' graphics::plot(betahat,beta.ash$PosteriorMean)
 #' summary(beta.ash)
-#' betan.ash=ash(betahat, sebetahat,nonzeromode=TRUE)
-#' graphics::plot(betahat, betan.ash$PosteriorMean)
-#' summary(betan.ash)
-#'
+#' 
+#' #'
 #' #Running ash with a pre-specified g, rather than estimating it
 #' beta = c(rep(0,100),rnorm(100))
 #' sebetahat = abs(rnorm(200,0,1))
@@ -228,7 +223,7 @@ ash = function(betahat,sebetahat,mixcompdist = c("uniform","halfuniform","normal
 #' ## Passing this g into ash causes it to
 #' ## i) take the sd and the means for each component from this g, and
 #' ## ii) initialize pi to the value from this g.
-#' beta.ash = ash(betahat, sebetahat,g=true_g,fixg=TRUE)
+#' beta.ash = ash.workhorse(betahat = betahat, sebetahat =  sebetahat,g=true_g,fixg=TRUE)
 ash.workhorse = function(betahat, errordist = NULL, sebetahat = NULL,
                          likelihood = c("normal", "t"),
                          gridsize = 100,

@@ -71,7 +71,7 @@ Uses default optimization function and perform
 beta = c(rep(0,20),rnorm(20))
 sebetahat = abs(rnorm(40,0,1))
 betahat = rnorm(40,beta,sebetahat)
-beta.ash = ash(betahat, sebetahat)
+beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 
 CImatrix=ashci(beta.ash,betahat,sebetahat,level=0.95)
 print(CImatrix)
@@ -88,7 +88,7 @@ print(CImatrix2)
 #beta = c(rep(0,1000),rnorm(1000))
 #sebetahat = abs(rnorm(2000,0,1))
 #betahat = rnorm(2000,beta,sebetahat)
-#beta.ash = ash(betahat, sebetahat)
+#beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 #CImatrix4 = ashci(beta.ash,betahat,sebetahat,level=0.95, betaindex=c(1:length(beta)),ncores=4)
 }
 

@@ -28,6 +28,9 @@ t likelihood, depending on the value for \code{df}.}
 
 \item{likelihood}{One of the pre-specified likelihoods available.}
 
+\item{gridsize}{The size of the grid if you are using one of the
+pre-specified likelihoods.}
+
 \item{method}{specifies how ash is to be run. Can be "shrinkage"
 (if main aim is shrinkage) or "fdr" (if main aim is to assess
 fdr or fsr) This is simply a convenient way to specify certain
@@ -108,9 +111,6 @@ algorithm. Default value is set to be control.default=list(K =
 kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE). User
 may supply changes to this list of parameter, say,
 control=list(maxiter=10000,trace=TRUE)}
-
-\item{gridisize}{The size of the grid if you are using one of the
-pre-specified likelihoods.}
 }
 \value{
 ash returns an object of \code{\link[base]{class}} "ash", a list
@@ -150,7 +150,7 @@ See readme for more details.
 beta = c(rep(0,100),rnorm(100))
 sebetahat = abs(rnorm(200,0,1))
 betahat = rnorm(200,beta,sebetahat)
-beta.ash = ash(betahat, sebetahat)
+beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 names(beta.ash)
 summary(beta.ash)
 head(as.data.frame(beta.ash))
@@ -161,13 +161,11 @@ print(CIMatrix)
 
 #Testing the non-zero mode feature
 betahat=betahat+5
-beta.ash = ash(betahat, sebetahat)
+beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 graphics::plot(betahat,beta.ash$PosteriorMean)
 summary(beta.ash)
-betan.ash=ash(betahat, sebetahat,nonzeromode=TRUE)
-graphics::plot(betahat, betan.ash$PosteriorMean)
-summary(betan.ash)
 
+#'
 #Running ash with a pre-specified g, rather than estimating it
 beta = c(rep(0,100),rnorm(100))
 sebetahat = abs(rnorm(200,0,1))
@@ -176,7 +174,7 @@ true_g = normalmix(c(0.5,0.5),c(0,0),c(0,1)) # define true g
 ## Passing this g into ash causes it to
 ## i) take the sd and the means for each component from this g, and
 ## ii) initialize pi to the value from this g.
-beta.ash = ash(betahat, sebetahat,g=true_g,fixg=TRUE)
+beta.ash = ash.workhorse(betahat = betahat, sebetahat =  sebetahat,g=true_g,fixg=TRUE)
 }
 \seealso{
 \code{\link{ash}} for simplified specification of ash

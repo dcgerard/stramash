@@ -1,4 +1,4 @@
 library(testthat)
-library(ashr)
+library(stramash)
 
-test_check("ashr")
+test_check("stramash")

@@ -23,7 +23,7 @@ Creates data frame for easy plotting of results etc
 Returns a data frame with named columnns
 }
 \examples{
-a = ash(rnorm(100,0,2),1)
+a = ash.workhorse(betahat = rnorm(100,0,2),sebetahat = rep(1, 100))
 head(as.data.frame(a))
 
 }

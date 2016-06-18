@@ -105,7 +105,7 @@ nonzeromodeEMoptimobj = function(mupi,betahat,sebetahat,g,df){
 nonzeromodeEMoptim = function(mu,pi,betahat,sebetahat,g,df){
   pi=normalize(pmax(0,pi)) #avoid occasional problems with negative pis due to rounding
   g$pi = pi
-  loglik=ashr::calc_loglik(g, betahat - mu,sebetahat,df)
+  loglik=calc_loglik(g, betahat - mu,sebetahat,df)
   return(-loglik)
 }
 

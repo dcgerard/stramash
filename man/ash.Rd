@@ -61,7 +61,7 @@ This function is actually just a simple wrapper that
 beta = c(rep(0,100),rnorm(100))
 sebetahat = abs(rnorm(200,0,1))
 betahat = rnorm(200,beta,sebetahat)
-beta.ash = ash(betahat, sebetahat)
+beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 summary(beta.ash)
 names(beta.ash)
 graphics::plot(betahat,beta.ash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
@@ -71,12 +71,9 @@ print(CIMatrix)
 
 #Illustrating the non-zero mode feature
 betahat=betahat+5
-beta.ash = ash(betahat, sebetahat)
+beta.ash = ash.workhorse(betahat = betahat, sebetahat = sebetahat)
 graphics::plot(betahat,beta.ash$PosteriorMean)
 summary(beta.ash)
-betan.ash=ash(betahat, sebetahat,nonzeromode=TRUE)
-graphics::plot(betahat, betan.ash$PosteriorMean)
-summary(betan.ash)
 }
 \seealso{
 \code{\link{ash.workhorse}} for complete specification of ash function

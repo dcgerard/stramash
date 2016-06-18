@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cxxMixSquarem <- function(matrix_lik, prior, pi_init, control) {
-    .Call('stamash_cxxMixSquarem', PACKAGE = 'stamash', matrix_lik, prior, pi_init, control)
+    .Call('stramash_cxxMixSquarem', PACKAGE = 'stramash', matrix_lik, prior, pi_init, control)
 }
 

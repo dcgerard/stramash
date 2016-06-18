@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // cxxMixSquarem
 List cxxMixSquarem(NumericMatrix matrix_lik, NumericVector prior, NumericVector pi_init, List control);
-RcppExport SEXP stamash_cxxMixSquarem(SEXP matrix_likSEXP, SEXP priorSEXP, SEXP pi_initSEXP, SEXP controlSEXP) {
+RcppExport SEXP stramash_cxxMixSquarem(SEXP matrix_likSEXP, SEXP priorSEXP, SEXP pi_initSEXP, SEXP controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
