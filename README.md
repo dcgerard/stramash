@@ -3,7 +3,7 @@
 STRAMASH: Specifying The Right Amount of Mixture-likelihood for Adaptive SHrinkage
 ==================================================================================
 
-This package is the same as the `ashr` package <https://github.com/stephens999/ashr> but also allows the error distrubiton to be any mixture of normals or uniforms. The that link for details on the model.
+This package is similar to and depends on the `ashr` package (<https://github.com/stephens999/ashr>) but also allows the error distrubiton to be any mixture of normals or uniforms. See that link for details on the model.
 
 Installation
 ============
