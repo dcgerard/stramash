@@ -41,9 +41,9 @@ log_compdens_conv_mix <- function(g, betahat, errordist) {
 
     ## make sure error distribution doesn't have point mass on zero
     if (class_e == "normalmix") {
-        assertthat::assert_that(!any(sapply(errordist, FUN = function(x) { any(x$sd == 0)})))
+        assertthat::assert_that(!any(sapply(errordist, FUN = function(x) { any(abs(x$sd) < 10 ^ -14) })))
     } else if (class_e == "unimix") {
-        assertthat::assert_that(!any(sapply(errordist, FUN = function(x) { any(x$a == 0 & x$b == 0)})))
+        assertthat::assert_that(!any(sapply(errordist, FUN = function(x) { any(abs(x$a - x$b) < 10 ^ -14) })))
     }
 
     if (class_g == "normalmix" & class_e == "normalmix") {
@@ -181,7 +181,7 @@ nuconv_dense <- function(g, errordist, x) {
         max_log
 
     ## deal with place where point mass at zero
-    which_zero <- g$sd == 0
+    which_zero <- abs(g$sd) < 10 ^ -14
     assertthat::assert_that(sum(which_zero) <= 1)
     like_vals[which_zero] <- log(sum(errordist$pi * (x >= errordist$a & x <= errordist$b) /
                                      (errordist$b - errordist$a)))
@@ -250,7 +250,7 @@ unconv_dense <- function(g, errordist, x) {
         max_log + log(diff_vec)
 
     ## deal with values where prior is point mass on zero.
-    which_zero <- g$a == 0 & g$b == 0
+    which_zero <- abs(g$a) < 10 ^ -14 & g$b < 10 ^ -14
     assertthat::assert_that(sum(which_zero) <= 1)
     zeropart <- stats::dnorm(x = x, mean = errordist$mean, sd = errordist$sd, log = TRUE)
     max_zeropart <- max(zeropart)
@@ -320,7 +320,7 @@ uuconv_dense <- function(g, errordist, x) {
     like_vals <- log(colSums(errordist$pi * like_dens_mat))
 
     ## deal with place where point mass at zero
-    which_zero <- g$a == 0 & g$b == 0
+    which_zero <- abs(g$a) < 10 ^ -14 & abs(g$b) < 10 ^ -14
     assertthat::assert_that(sum(which_zero) <= 1)
     like_vals[which_zero] <- log(sum(errordist$pi * (x >= errordist$a & x <= errordist$b) /
                                      (errordist$b - errordist$a)))
@@ -418,7 +418,7 @@ post_mix_dist.normalnormal <- function(g, betahat, errordist) {
     }
 
 
-    which_pointmass <- g$sd == 0
+    which_pointmass <- abs(g$sd) < 10 ^ -14
 
     ## compute weights_array, means_array, and variances_array
     for (seindex in 1:n) {
@@ -464,7 +464,7 @@ post_mix_dist.normaluni <- function(g, betahat, errordist) {
     lower_array     <- array(NA, dim = c(n, K, Lj))
     upper_array     <- array(NA, dim = c(n, K, Lj))
 
-    which_pointmass <- g$sd == 0
+    which_pointmass <- abs(g$sd) < 10 ^ -14
 
     ## compute carray
     for (seindex in 1:n) {
@@ -530,7 +530,7 @@ post_mix_dist.uninormal <- function(g, betahat, errordist) {
     lower_array     <- array(NA, dim = c(n, K, Lj))
     upper_array     <- array(NA, dim = c(n, K, Lj))
 
-    which_pointmass <- g$a == 0 & g$b == 0
+    which_pointmass <- abs(g$a) < 10 ^ -14 & abs(g$b) < 10 ^ -14
 
     ## compute carray
     for (seindex in 1:n) {
@@ -593,7 +593,7 @@ post_mix_dist.uniuni <- function(g, betahat, errordist) {
     lower_array     <- array(NA, dim = c(n, K, Lj))
     upper_array     <- array(NA, dim = c(n, K, Lj))
 
-    which_pointmass <- g$a == 0 & g$b == 0
+    which_pointmass <- abs(g$a) < 10 ^ -14 & abs(g$b) < 10 ^ -14
 
     ## compute carray
     for (seindex in 1:n) {
@@ -670,7 +670,7 @@ mix_mean_array.normalmix_array <- function(mixdist) {
     return(apply(mixdist$means * mixdist$weights, 1, sum))
 }
 mix_mean_array.truncnormalmix_array <- function(mixdist) {
-    which_pointmass <- mixdist$variances == 0 | (mixdist$lower == 0 & mixdist$upper == 0)
+    which_pointmass <- abs(mixdist$variances) < 10 ^ -14 | (abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14)
 
     sdarray <- sqrt(mixdist$variances)
     alpha <- (mixdist$lower - mixdist$means) / sdarray
@@ -719,15 +719,15 @@ mix_probzero_array.default <- function(mixdist) {
     stop(paste("Error: Invalid class", class(mixdist), "for argument in", match.call()))
 }
 mix_probzero_array.normalmix_array <- function(mixdist) {
-    which_pointmass <- mixdist$variances == 0
+    which_pointmass <- abs(mixdist$variances) < 10 ^ -14
     return(apply(mixdist$weights * which_pointmass, 1, sum))
 }
 mix_probzero_array.truncnormalmix_array <- function(mixdist) {
-    which_pointmass <- mixdist$variances == 0 | (mixdist$lower == 0 & mixdist$upper == 0)
+    which_pointmass <- abs(mixdist$variances) < 10 ^ -14 | (abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14)
     return(apply(mixdist$weights * which_pointmass, 1, sum))
 }
 mix_probzero_array.unimix_array <- function(mixdist) {
-    which_pointmass <- mixdist$lower == 0 & mixdist$upper == 0
+    which_pointmass <- abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14
     return(apply(mixdist$weights * which_pointmass, 1, sum))
 }
 
@@ -753,7 +753,7 @@ mix_sd_array.normalmix_array <- function(mixdist) {
     return(sqrt(second_moment - first_moment2))
 }
 mix_sd_array.truncnormalmix_array <- function(mixdist) {
-    which_pointmass <- mixdist$variances == 0 | (mixdist$lower == 0 & mixdist$upper == 0)
+    which_pointmass <- abs(mixdist$variances) < 10 ^ -14 | (abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14)
 
     sdarray <- sqrt(mixdist$variances)
     alpha <- (mixdist$lower - mixdist$means) / sdarray
@@ -787,7 +787,7 @@ mix_sd_array.truncnormalmix_array <- function(mixdist) {
     return(sqrt(second_moment - first_moment2))
 }
 mix_sd_array.unimix_array <- function(mixdist) {
-    which_pointmass <- mixdist$lower == 0 & mixdist$upper == 0
+    which_pointmass <- abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14
     postmeans <- (mixdist$upper + mixdist$lower) / 2
     postvars  <- (mixdist$upper - mixdist$lower) ^ 2 / 12
     postmeans[which_pointmass] <- 0
@@ -816,7 +816,7 @@ mix_cdf_array.normalmix_array <- function(mixdist, q) {
     return(apply(pless * mixdist$weights, 1, sum))
 }
 mix_cdf_array.truncnormalmix_array <- function(mixdist, q) {
-    which_pointmass <- mixdist$variances == 0 | (mixdist$lower == 0 & mixdist$upper == 0)
+    which_pointmass <- abs(mixdist$variances) < 10 ^ -14 | (abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14)
 
     sdarray <- sqrt(mixdist$variances)
     alpha <- (mixdist$lower - mixdist$means) / sdarray
@@ -841,7 +841,7 @@ mix_cdf_array.truncnormalmix_array <- function(mixdist, q) {
     return(apply(pless * mixdist$weights, 1, sum))
 }
 mix_cdf_array.unimix_array <- function(mixdist, q) {
-    which_pointmass <- mixdist$lower == 0 & mixdist$upper == 0
+    which_pointmass <- abs(mixdist$lower) < 10 ^ -14 & abs(mixdist$upper) < 10 ^ -14
     pless <- stats::punif(q = q, min = mixdist$lower, max = mixdist$upper)
     pless[which_pointmass] <- (q >= 0) * 1
     return(apply(pless * mixdist$weights, 1, sum))
