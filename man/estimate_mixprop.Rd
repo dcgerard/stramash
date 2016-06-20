@@ -5,7 +5,7 @@
 \title{Estimate mixture proportions of sigmaa by EM algorithm}
 \usage{
 estimate_mixprop(betahat, g, prior, optmethod = c("mixEM", "mixVBEM",
-  "cxxMixSquarem", "mixIP"), null.comp = 1, df = NULL, control = list(),
+  "mixIP"), null.comp = 1, df = NULL, control = list(),
   errordist = NULL)
 }
 \arguments{

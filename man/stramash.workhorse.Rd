@@ -7,12 +7,11 @@
 stramash.workhorse(betahat, errordist = NULL, sebetahat = NULL,
   likelihood = c("normal", "t"), gridsize = 100, method = c("fdr",
   "shrink"), mixcompdist = c("uniform", "halfuniform", "normal", "+uniform",
-  "-uniform"), optmethod = c("mixIP", "cxxMixSquarem", "mixEM", "mixVBEM"),
-  df = NULL, randomstart = FALSE, nullweight = 10, nonzeromode = FALSE,
+  "-uniform"), optmethod = c("mixIP", "mixEM", "mixVBEM"), df = NULL,
+  randomstart = FALSE, nullweight = 10, nonzeromode = FALSE,
   pointmass = NULL, prior = c("nullbiased", "uniform", "unit"),
   mixsd = NULL, gridmult = sqrt(2), outputlevel = 2, g = NULL,
-  fixg = FALSE, cxx = NULL, VB = NULL, model = c("EE", "ET"),
-  control = list())
+  fixg = FALSE, model = c("EE", "ET"), control = list())
 }
 \arguments{
 \item{betahat}{a p vector of estimates}
@@ -89,18 +88,6 @@ computations with the "true" g)}
 
 \item{fixg}{if TRUE, don't estimate g but use the specified g -
 useful for computations under the "true" g in simulations}
-
-\item{cxx}{flag (deprecated, use optmethod) to indicate whether to
-use the c++ (Rcpp) version. After application of Squared
-extrapolation methods for accelerating fixed-point iterations
-(R Package "SQUAREM"), the c++ version is no longer faster than
-non-c++ version, thus we do not recommend using this one, and
-might be removed at any point.}
-
-\item{VB}{(deprecated, use optmethod) whether to use Variational
-Bayes to estimate mixture proportions (instead of EM to find
-MAP estimate), see \code{\link{mixVBEM}} and
-\code{\link{mixEM}}}
 
 \item{model}{c("EE","ET") specifies whether to assume exchangeable
 effects (EE) or exchangeable T stats (ET).}

@@ -143,16 +143,6 @@ stramash <- function(betahat, errordist = NULL, sebetahat = NULL,
 #'     computations with the "true" g)
 #' @param fixg if TRUE, don't estimate g but use the specified g -
 #'     useful for computations under the "true" g in simulations
-#' @param VB (deprecated, use optmethod) whether to use Variational
-#'     Bayes to estimate mixture proportions (instead of EM to find
-#'     MAP estimate), see \code{\link{mixVBEM}} and
-#'     \code{\link{mixEM}}
-#' @param cxx flag (deprecated, use optmethod) to indicate whether to
-#'     use the c++ (Rcpp) version. After application of Squared
-#'     extrapolation methods for accelerating fixed-point iterations
-#'     (R Package "SQUAREM"), the c++ version is no longer faster than
-#'     non-c++ version, thus we do not recommend using this one, and
-#'     might be removed at any point.
 #' @param model c("EE","ET") specifies whether to assume exchangeable
 #'     effects (EE) or exchangeable T stats (ET).
 #' @param control A list of control parameters for the optmization
@@ -237,14 +227,14 @@ stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
                          gridsize = 100,
                          method = c("fdr", "shrink"),
                          mixcompdist = c("uniform", "halfuniform", "normal", "+uniform", "-uniform"),
-                         optmethod = c("mixIP", "cxxMixSquarem", "mixEM", "mixVBEM"),
+                         optmethod = c("mixIP", "mixEM", "mixVBEM"),
                          df = NULL, randomstart = FALSE,
                          nullweight = 10, nonzeromode = FALSE,
                          pointmass = NULL,
                          prior = c("nullbiased", "uniform", "unit"),
                          mixsd = NULL, gridmult = sqrt(2),
                          outputlevel = 2, g = NULL, fixg = FALSE,
-                         cxx = NULL, VB = NULL, model = c("EE", "ET"),
+                         model = c("EE", "ET"),
                          control = list()){
 
     likelihood  <- match.arg(likelihood)
@@ -528,9 +518,8 @@ stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
 #VB provides an approach to estimate the approximate posterior distribution
 #of mixture proportions of sigmaa by variational Bayes method
 #(use Dirichlet prior and approximate Dirichlet posterior)
-#if cxx TRUE use cpp version of R function mixEM
 estimate_mixprop <- function(betahat, g, prior,
-                             optmethod = c("mixEM", "mixVBEM", "cxxMixSquarem", "mixIP"),
+                             optmethod = c("mixEM", "mixVBEM", "mixIP"),
                              null.comp = 1, df = NULL,
                              control = list(), errordist = NULL){
     control.default <- list(K = 1, method = 3, square = TRUE, step.min0 = 1,

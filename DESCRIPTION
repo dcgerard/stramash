@@ -4,29 +4,23 @@ Author: David Gerard
 Version: 1.0.0
 License: GPL-3
 Title: STRAMASH: Specifying The Right Amount of Mixture-likelihood for Adaptive SHrinkage
-Description: This package is similar to the ashr package, but
-    allows for any mixture likelihood. The main function in the stramash
-    package is \code{\link{stramash}}, which should be examined for
-    more details. For simplicity only the most commonly- used options
-    are documented under \code{\link{stramash}}. For expert or
-    interested users the documentation for function
+Description: This package is similar to and depends on the ashr
+    package, but allows for any mixture likelihood. The main function
+    in the stramash package is \code{\link{stramash}}, which should be
+    examined for more details. For simplicity only the most commonly-
+    used options are documented under \code{\link{stramash}}. For
+    expert or interested users the documentation for function
     \code{\link{stramash.workhorse}} provides documentation on all
     implemented options.
 Imports:
     assertthat,
-    truncnorm,
-    SQUAREM,
-    doParallel,
-    pscl,
-    Rcpp (>= 0.10.5),
-    hypergeo,
-    foreach,
     VGAM,
     ashr
 Suggests:
-    REBayes,
     testthat,
+    REBayes,
     roxygen2
+Remotes: github::stephens999/ashr
 URL: "http://github.com/dcgerard/stramash
 BugReports: http://github.com/dcgerard/tensr/stramash
 RoxygenNote: 5.0.1
