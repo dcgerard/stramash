@@ -887,12 +887,14 @@ calc_nulllik_array <- function(betahat, errordist) {
 #'     the more accurate the approximation, but the higher the
 #'     computational load --- especially if you intend to use this for
 #'     \code{\link{stramash.workhorse}}.
+#' @param eps A positive numeric. The tolerance from 0 and 1 for the
+#'     grid in the probability space.
 #'
 #' @export
 #'
 #' @author David Gerard
-t_to_mix <- function(mu, sig, df, gridsize = 20) {
-    pgrid <- seq(1 / 10000, 1 - 1 / 10000, length = gridsize + 1)
+t_to_mix <- function(mu, sig, df, gridsize = 20, eps = 10 ^ -6) {
+    pgrid <- seq(eps, 1 - eps, length = gridsize + 1)
 
     shape_param <- df / 2
     rate_param  <- df * sig ^ 2 / 2
@@ -923,24 +925,26 @@ t_to_mix <- function(mu, sig, df, gridsize = 20) {
 #'     the more accurate the approximation, but the higher the
 #'     computational load --- especially if you intend to use this for
 #'     \code{\link{stramash.workhorse}}.
+#' @param eps A positive numeric. The tolerance from 0 and 1 for the
+#'     grid in the probability space.
 #'
 #' @export
 #'
 #' @author David Gerard
-laplace_to_mix <- function(mu, sig, gridsize = 20) {
+laplace_to_mix <- function(mu, sig, gridsize = 20, eps = 10 ^ -6) {
     if (!requireNamespace("VGAM", quietly = TRUE)) {
         stop("VGAM must be installed to use laplace_to_mix")
     }
-    pgrid <- seq(1 / 10000, 1 - 1 / 10000, length = gridsize + 1)
+    pgrid <- seq(eps, 1 - eps, length = gridsize + 1)
 
     mean_grid <- rep(mu, length = gridsize)
-    temp_grid <- VGAM::qrayleigh(p = pgrid, scale = sig ^ 2)
-    var_grid  <- (temp_grid[2:length(temp_grid)] +
+    temp_grid <- VGAM::qrayleigh(p = pgrid, scale = sig)
+    sd_grid  <- (temp_grid[2:length(temp_grid)] +
                   temp_grid[1:(length(temp_grid) - 1)]) / 2
 
     weight_grid <- rep(1 / gridsize, length = gridsize)
 
-    lapprox <- normalmix(pi = weight_grid, mean = mean_grid, sd = sqrt(var_grid))
+    lapprox <- normalmix(pi = weight_grid, mean = mean_grid, sd = sd_grid)
 
     return(lapprox)
 }

@@ -7,8 +7,8 @@
 \title{stramash}
 \usage{
 stramash(betahat, errordist = NULL, sebetahat = NULL,
-  mixcompdist = c("uniform", "halfuniform", "normal", "+uniform", "-uniform"),
-  df = NULL, ...)
+  likelihood = c("normal", "t", "laplace"), mixcompdist = c("uniform",
+  "halfuniform", "normal", "+uniform", "-uniform"), df = NULL, ...)
 }
 \arguments{
 \item{betahat}{a p vector of estimates}
@@ -22,6 +22,10 @@ normal or t likelihood, depending on the value for \code{df}.}
 
 \item{sebetahat}{a p vector of corresponding standard errors}
 
+\item{likelihood}{One of the pre-specified likelihoods
+available. So far, they are \code{"normal"}, \code{"t"}, and
+\code{"laplace"}.}
+
 \item{mixcompdist}{distribution of components in mixture
 ("uniform","halfuniform" or "normal"; "+uniform" or
 "-uniform"), the default is "uniform". If you believe your
@@ -30,8 +34,7 @@ allow only positive/negative effects use "+uniform"/"-uniform".
 The use of "normal" is permitted only if df=NULL.}
 
 \item{df}{appropriate degrees of freedom for (t) distribution of
-betahat/sebetahat, default is NULL which is actually treated as
-infinity (Gaussian)}
+betahat/sebetahat if \code{likelihood = "t"}.}
 
 \item{...}{Further arguments to be passed to
 \code{\link{stramash.workhorse}}.}

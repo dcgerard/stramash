@@ -37,8 +37,10 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("completeobs",
 #'     allow only positive/negative effects use "+uniform"/"-uniform".
 #'     The use of "normal" is permitted only if df=NULL.
 #' @param df appropriate degrees of freedom for (t) distribution of
-#'     betahat/sebetahat, default is NULL which is actually treated as
-#'     infinity (Gaussian)
+#'     betahat/sebetahat if \code{likelihood = "t"}.
+#' @param likelihood One of the pre-specified likelihoods
+#'     available. So far, they are \code{"normal"}, \code{"t"}, and
+#'     \code{"laplace"}.
 #' @param ... Further arguments to be passed to
 #'     \code{\link{stramash.workhorse}}.
 #'
@@ -76,8 +78,9 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("completeobs",
 #' graphics::plot(betahat, beta.stramash$PosteriorMean, xlim = c(-4, 4), ylim = c(-4, 4))
 #'
 stramash <- function(betahat, errordist = NULL, sebetahat = NULL,
-               mixcompdist = c("uniform", "halfuniform", "normal", "+uniform", "-uniform"),
-               df = NULL, ...) {
+                     likelihood = c("normal", "t", "laplace"),
+                     mixcompdist = c("uniform", "halfuniform", "normal", "+uniform", "-uniform"),
+                     df = NULL, ...) {
   return(utils::modifyList(stramash.workhorse(betahat, sebetahat,
                                   mixcompdist = mixcompdist, df = df,
                                   ...), list(call = match.call())))
@@ -98,12 +101,12 @@ stramash <- function(betahat, errordist = NULL, sebetahat = NULL,
 #'
 #' @param betahat a p vector of estimates
 #' @param sebetahat a p vector of corresponding standard errors
-#' @param method specifies how stramash is to be run. Can be "shrinkage"
-#'     (if main aim is shrinkage) or "fdr" (if main aim is to assess
-#'     fdr or fsr) This is simply a convenient way to specify certain
-#'     combinations of parameters: "shrinkage" sets pointmass=FALSE
-#'     and prior="uniform"; "fdr" sets pointmass=TRUE and
-#'     prior="nullbiased".
+#' @param method specifies how stramash is to be run. Can be
+#'     "shrinkage" (if main aim is shrinkage) or "fdr" (if main aim is
+#'     to assess fdr or fsr) This is simply a convenient way to
+#'     specify certain combinations of parameters: "shrinkage" sets
+#'     pointmass=FALSE and prior="uniform"; "fdr" sets pointmass=TRUE
+#'     and prior="nullbiased".
 #' @param mixcompdist distribution of components in mixture (
 #'     "uniform","halfuniform","normal" or "+uniform"), the default
 #'     value is "uniform" use "halfuniform" to allow for assymetric g,
@@ -155,9 +158,11 @@ stramash <- function(betahat, errordist = NULL, sebetahat = NULL,
 #'     or \code{unimix}. The length of this list must be the length of
 #'     \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
 #'     distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-#'     which case \code{stramash.workhorse} will assume either a normal or
-#'     t likelihood, depending on the value for \code{df}.
-#' @param likelihood One of the pre-specified likelihoods available.
+#'     which case \code{stramash.workhorse} will assume either a
+#'     normal or t likelihood, depending on the value for \code{df}.
+#' @param likelihood One of the pre-specified likelihoods
+#'     available. So far, they are \code{"normal"}, \code{"t"}, and
+#'     \code{"laplace"}.
 #' @param gridsize The size of the grid if you are using one of the
 #'     pre-specified likelihoods.
 #'
@@ -223,10 +228,12 @@ stramash <- function(betahat, errordist = NULL, sebetahat = NULL,
 #' beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat,
 #'                                    g = true_g, fixg = TRUE)
 stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
-                         likelihood = c("normal", "t"),
+                         likelihood = c("normal", "t", "laplace"),
                          gridsize = 100,
                          method = c("fdr", "shrink"),
-                         mixcompdist = c("uniform", "halfuniform", "normal", "+uniform", "-uniform"),
+                         mixcompdist = c("uniform", "halfuniform",
+                                         "normal", "+uniform",
+                                         "-uniform"),
                          optmethod = c("mixIP", "mixEM", "mixVBEM"),
                          df = NULL, randomstart = FALSE,
                          nullweight = 10, nonzeromode = FALSE,
@@ -273,8 +280,12 @@ stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
         for (index in 1:length(betahat)) {
             errordist[[index]] <- normalmix(pi = 1, mean = 0, sd = sebetahat[index])
         }
-    }
+    } else if (likelihood == "laplace" & is.null(errordist) & !is.null(sebetahat)) {
+        for (index in 1:length(betahat)) {
+            errordist[[index]] <- laplace_to_mix(mu = 0, sig = sebetahat[index])
 
+        }
+    }
 
     assertthat::are_equal(length(betahat), length(errordist))
     class_vec <- sapply(errordist, class)

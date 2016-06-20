@@ -21,6 +21,6 @@ Suggests:
     REBayes,
     roxygen2
 Remotes: github::stephens999/ashr
-URL: "http://github.com/dcgerard/stramash
+URL: http://github.com/dcgerard/stramash
 BugReports: http://github.com/dcgerard/tensr/stramash
 RoxygenNote: 5.0.1

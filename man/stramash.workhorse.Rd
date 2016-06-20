@@ -5,13 +5,13 @@
 \title{Detailed Adaptive Shrinkage function}
 \usage{
 stramash.workhorse(betahat, errordist = NULL, sebetahat = NULL,
-  likelihood = c("normal", "t"), gridsize = 100, method = c("fdr",
-  "shrink"), mixcompdist = c("uniform", "halfuniform", "normal", "+uniform",
-  "-uniform"), optmethod = c("mixIP", "mixEM", "mixVBEM"), df = NULL,
-  randomstart = FALSE, nullweight = 10, nonzeromode = FALSE,
-  pointmass = NULL, prior = c("nullbiased", "uniform", "unit"),
-  mixsd = NULL, gridmult = sqrt(2), outputlevel = 2, g = NULL,
-  fixg = FALSE, model = c("EE", "ET"), control = list())
+  likelihood = c("normal", "t", "laplace"), gridsize = 100,
+  method = c("fdr", "shrink"), mixcompdist = c("uniform", "halfuniform",
+  "normal", "+uniform", "-uniform"), optmethod = c("mixIP", "mixEM",
+  "mixVBEM"), df = NULL, randomstart = FALSE, nullweight = 10,
+  nonzeromode = FALSE, pointmass = NULL, prior = c("nullbiased",
+  "uniform", "unit"), mixsd = NULL, gridmult = sqrt(2), outputlevel = 2,
+  g = NULL, fixg = FALSE, model = c("EE", "ET"), control = list())
 }
 \arguments{
 \item{betahat}{a p vector of estimates}
@@ -20,22 +20,24 @@ stramash.workhorse(betahat, errordist = NULL, sebetahat = NULL,
 or \code{unimix}. The length of this list must be the length of
 \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
 distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-which case \code{stramash.workhorse} will assume either a normal or
-t likelihood, depending on the value for \code{df}.}
+which case \code{stramash.workhorse} will assume either a
+normal or t likelihood, depending on the value for \code{df}.}
 
 \item{sebetahat}{a p vector of corresponding standard errors}
 
-\item{likelihood}{One of the pre-specified likelihoods available.}
+\item{likelihood}{One of the pre-specified likelihoods
+available. So far, they are \code{"normal"}, \code{"t"}, and
+\code{"laplace"}.}
 
 \item{gridsize}{The size of the grid if you are using one of the
 pre-specified likelihoods.}
 
-\item{method}{specifies how stramash is to be run. Can be "shrinkage"
-(if main aim is shrinkage) or "fdr" (if main aim is to assess
-fdr or fsr) This is simply a convenient way to specify certain
-combinations of parameters: "shrinkage" sets pointmass=FALSE
-and prior="uniform"; "fdr" sets pointmass=TRUE and
-prior="nullbiased".}
+\item{method}{specifies how stramash is to be run. Can be
+"shrinkage" (if main aim is shrinkage) or "fdr" (if main aim is
+to assess fdr or fsr) This is simply a convenient way to
+specify certain combinations of parameters: "shrinkage" sets
+pointmass=FALSE and prior="uniform"; "fdr" sets pointmass=TRUE
+and prior="nullbiased".}
 
 \item{mixcompdist}{distribution of components in mixture (
 "uniform","halfuniform","normal" or "+uniform"), the default

@@ -5,7 +5,7 @@
 \title{Generate an object of class \code{normalmix} that is an
 approximation to a Laplace distribution.}
 \usage{
-laplace_to_mix(mu, sig, gridsize = 20)
+laplace_to_mix(mu, sig, gridsize = 20, eps = 10^-6)
 }
 \arguments{
 \item{mu}{The location of the Laplace distribution.}
@@ -16,6 +16,9 @@ laplace_to_mix(mu, sig, gridsize = 20)
 the more accurate the approximation, but the higher the
 computational load --- especially if you intend to use this for
 \code{\link{stramash.workhorse}}.}
+
+\item{eps}{A positive numeric. The tolerance from 0 and 1 for the
+grid in the probability space.}
 }
 \description{
 This is based on the representation of the Laplace distribution as

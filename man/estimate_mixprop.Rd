@@ -35,8 +35,8 @@ kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE).}
 or \code{unimix}. The length of this list must be the length of
 \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
 distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-which case \code{stramash.workhorse} will assume either a normal or
-t likelihood, depending on the value for \code{df}.}
+which case \code{stramash.workhorse} will assume either a
+normal or t likelihood, depending on the value for \code{df}.}
 }
 \value{
 A list, including the final loglikelihood, the null

@@ -5,7 +5,7 @@
 \title{Generate an object of class \code{normalmix} that is an
 approximation to a t-distribution.}
 \usage{
-t_to_mix(mu, sig, df, gridsize = 20)
+t_to_mix(mu, sig, df, gridsize = 20, eps = 10^-6)
 }
 \arguments{
 \item{mu}{The mean of the t-distribution.}
@@ -18,6 +18,9 @@ t_to_mix(mu, sig, df, gridsize = 20)
 the more accurate the approximation, but the higher the
 computational load --- especially if you intend to use this for
 \code{\link{stramash.workhorse}}.}
+
+\item{eps}{A positive numeric. The tolerance from 0 and 1 for the
+grid in the probability space.}
 }
 \description{
 This is based on the representation of the t as an inverse-gamma
