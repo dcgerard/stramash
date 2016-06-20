@@ -1008,3 +1008,54 @@ runimix <- function(n, mixdense) {
     samp <- stats::runif(n = n, min = mixdense$a[which_uni], max = mixdense$b[which_uni])
     return(samp)
 }
+
+
+#' Standard deviation of either class \code{\link[ashr]{normalmix}} or
+#'     class \code{\link[ashr]{unimix}}
+#'
+#' @param m An object either of class \code{\link[ashr]{normalmix}} or
+#'     of class \code{\link[ashr]{unimix}}.
+#'
+#' @author David Gerard
+#'
+#' @export
+mixsd <- function(m) {
+    UseMethod("mixsd")
+}
+mixsd.default <- function(m) {
+    stop(paste("Error: Invalid class", class(m), "for argument in", match.call()))
+}
+mixsd.normalmix <- function(m) {
+    sdout <- sqrt(sum((m$mean ^ 2 + m$sd ^ 2) * m$pi) - sum(m$mean * m$pi) ^ 2)
+    return(sdout)
+}
+mixsd.unimix <- function(m) {
+    mean_val <- (m$a + m$b) / 2
+    var_val  <- (m$b - m$a) ^ 2 / 12
+    sdout <- sqrt(sum((mean_val ^ 2 +  var_val) * m$pi) - sum(mean_val * m$pi) ^ 2)
+    return(sdout)
+}
+
+
+
+#' Mean of either class \code{\link[ashr]{normalmix}} or class
+#'     \code{\link[ashr]{unimix}}
+#'
+#' @param m An object either of class \code{\link[ashr]{normalmix}} or
+#'     of class \code{\link[ashr]{unimix}}.
+#'
+#' @author David Gerard
+#'
+#' @export
+mixmean <- function(m) {
+    UseMethod("mixmean")
+}
+mixmean.default <- function(m) {
+    stop(paste("Error: Invalid class", class(m), "for argument in", match.call()))
+}
+mixmean.normalmix <- function(m) {
+    return(sum(m$mean * m$pi))
+}
+mixmean.unimix <- function(m) {
+    return(sum((m$a + m$b) / 2 * m$pi))
+}

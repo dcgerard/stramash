@@ -2,6 +2,8 @@
 
 export(dnormalmix)
 export(laplace_to_mix)
+export(mixmean)
+export(mixsd)
 export(pnormalmix)
 export(process_args)
 export(rnormalmix)
