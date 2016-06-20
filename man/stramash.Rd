@@ -13,12 +13,14 @@ stramash(betahat, errordist = NULL, sebetahat = NULL,
 \arguments{
 \item{betahat}{a p vector of estimates}
 
-\item{errordist}{A list of objects of either class \code{normalmix}
-or \code{unimix}. The length of this list must be the length of
-\code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
-distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-which case \code{stramash.workhorse} will assume either a
-normal or t likelihood, depending on the value for \code{df}.}
+\item{errordist}{A list of objects of either class
+\code{\link[ashr]{normalmix}} or
+\code{\link[ashr]{unimix}}. The length of this list must be the
+length of \code{betahat}. Note that \code{errordist[[i]]} is
+the \eqn{i}th error distribution of \code{betahat[i]}. Defaults
+to \code{NULL}, in which case \code{stramash.workhorse} will
+assume either a normal, t, or Laplace likelihood, depending on
+the value for \code{likelihood}.}
 
 \item{sebetahat}{a p vector of corresponding standard errors}
 
@@ -27,11 +29,12 @@ available. So far, they are \code{"normal"}, \code{"t"}, and
 \code{"laplace"}.}
 
 \item{mixcompdist}{distribution of components in mixture
-("uniform","halfuniform" or "normal"; "+uniform" or
-"-uniform"), the default is "uniform". If you believe your
-effects may be asymmetric, use "halfuniform". If you want to
-allow only positive/negative effects use "+uniform"/"-uniform".
-The use of "normal" is permitted only if df=NULL.}
+(\code{"uniform"}, \code{"halfuniform"}, \code{"normal"},
+\code{"+uniform"}, or \code{"-uniform"}), the default is
+\code{"uniform"}. If you believe your effects may be
+asymmetric, use \code{"halfuniform"}. If you want to allow only
+positive/negative effects use
+\code{"+uniform"}/\code{"-uniform"}.}
 
 \item{df}{appropriate degrees of freedom for (t) distribution of
 betahat/sebetahat if \code{likelihood = "t"}.}
@@ -41,7 +44,7 @@ betahat/sebetahat if \code{likelihood = "t"}.}
 }
 \value{
 stramash returns an object of \code{\link[base]{class}}
-    "stramash", a list with some or all of the following elements
+    "\code{ash}", a list with some or all of the following elements
     (determined by outputlevel) \cr
 \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 \item{loglik}{log P(D|mle(pi))}
@@ -69,16 +72,17 @@ The main function in the stramash package is
     \code{\link{stramash.workhorse}} provides documentation on all
     implemented options.
 
-Takes vectors of estimates (betahat) and their
-    standard errors (sebetahat), and applies shrinkage to them,
-    using Empirical Bayes methods, to compute shrunk estimates for
-    beta.
+Takes vectors of estimates (\code{betahat}) and their
+    standard errors (\code{sebetahat}) or a list of mixture error
+    distributions (\code{errordist}), and applies shrinkage to
+    them, using Empirical Bayes methods, to compute shrunk
+    estimates for beta.
 }
 \details{
 This function is actually just a simple wrapper that
     passes its parameters to \code{\link{stramash.workhorse}} which
-    provides more documented options for advanced use. See readme
-    for more details.
+    provides more documented options for advanced use. See
+    README.md for more details.
 }
 \examples{
 beta = c(rep(0, 100), stats::rnorm(100))

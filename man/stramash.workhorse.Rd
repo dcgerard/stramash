@@ -16,12 +16,14 @@ stramash.workhorse(betahat, errordist = NULL, sebetahat = NULL,
 \arguments{
 \item{betahat}{a p vector of estimates}
 
-\item{errordist}{A list of objects of either class \code{normalmix}
-or \code{unimix}. The length of this list must be the length of
-\code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
-distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-which case \code{stramash.workhorse} will assume either a
-normal or t likelihood, depending on the value for \code{df}.}
+\item{errordist}{A list of objects of either class
+\code{\link[ashr]{normalmix}} or
+\code{\link[ashr]{unimix}}. The length of this list must be the
+length of \code{betahat}. Note that \code{errordist[[i]]} is
+the \eqn{i}th error distribution of \code{betahat[i]}. Defaults
+to \code{NULL}, in which case \code{stramash.workhorse} will
+assume either a normal, t, or Laplace likelihood, depending on
+the value for \code{likelihood}.}
 
 \item{sebetahat}{a p vector of corresponding standard errors}
 
@@ -33,76 +35,82 @@ available. So far, they are \code{"normal"}, \code{"t"}, and
 pre-specified likelihoods.}
 
 \item{method}{specifies how stramash is to be run. Can be
-"shrinkage" (if main aim is shrinkage) or "fdr" (if main aim is
-to assess fdr or fsr) This is simply a convenient way to
-specify certain combinations of parameters: "shrinkage" sets
-pointmass=FALSE and prior="uniform"; "fdr" sets pointmass=TRUE
-and prior="nullbiased".}
+\code{"shrinkage"} (if main aim is shrinkage) or \code{"fdr"}
+(if main aim is to assess fdr or fsr) This is simply a
+convenient way to specify certain combinations of parameters:
+\code{"shrinkage"} sets \code{pointmass = FALSE} and
+\code{prior = "uniform"}; \code{"fdr"} sets \code{pointmass =
+TRUE} and \code{prior = "nullbiased"}.}
 
-\item{mixcompdist}{distribution of components in mixture (
-"uniform","halfuniform","normal" or "+uniform"), the default
-value is "uniform" use "halfuniform" to allow for assymetric g,
-and "+uniform"/"-uniform" to constrain g to be
-positive/negative.}
+\item{mixcompdist}{distribution of components in mixture
+(\code{"uniform"}, \code{"halfuniform"}, \code{"normal"},
+\code{"+uniform"}, or \code{"-uniform"}), the default is
+\code{"uniform"}. If you believe your effects may be
+asymmetric, use \code{"halfuniform"}. If you want to allow only
+positive/negative effects use
+\code{"+uniform"}/\code{"-uniform"}.}
 
 \item{optmethod}{specifies optimization method used. Default is
-"mixIP", an interior point method, if REBayes is installed;
-otherwise an EM algorithm is used. The interior point method is
-faster for large problems (n>2000).}
+\code{"mixIP"}, an interior point method, if REBayes is
+installed; otherwise an EM algorithm is used. The interior
+point method is faster for large problems (n>2000).}
 
 \item{df}{appropriate degrees of freedom for (t) distribution of
-betahat/sebetahat, default is NULL(Gaussian)}
+betahat/sebetahat if \code{likelihood = "t"}.}
 
 \item{randomstart}{logical, indicating whether to initialize EM
-randomly. If FALSE, then initializes to prior mean (for EM
-algorithm) or prior (for VBEM)}
+randomly. If \code{FALSE}, then initializes to prior mean (for
+EM algorithm) or prior (for VBEM)}
 
 \item{nullweight}{scalar, the weight put on the prior under
-"nullbiased" specification, see \code{prior}}
+\code{"nullbiased"} specification, see \code{prior}}
 
 \item{nonzeromode}{logical, indicating whether to use a non-zero
-unimodal mixture(default is "FALSE")}
+unimodal mixture(default is \code{FALSE})}
 
 \item{pointmass}{logical, indicating whether to use a point mass at
 zero as one of components for a mixture distribution}
 
 \item{prior}{string, or numeric vector indicating Dirichlet prior
-on mixture proportions (defaults to "uniform", or (1,1...,1);
-also can be "nullbiased" (nullweight,1,...,1) to put more
-weight on first component), or "unit" (1/K,...,1/K) [for
-optmethod=mixVBEM version only]}
+on mixture proportions (defaults to \code{"uniform"}, or
+\eqn{(1,1...,1)}; also can be \code{"nullbiased"}
+\eqn{(nullweight,1,...,1)} to put more weight on first
+component), or \code{"unit"} \eqn{(1/K,...,1/K)} [for
+\code{optmethod = mixVBEM} version only]}
 
-\item{mixsd}{vector of sds for underlying mixture components}
+\item{mixsd}{vector of standard deviations for underlying mixture
+components for the prior.}
 
 \item{gridmult}{the multiplier by which the default grid values for
 mixsd differ by one another. (Smaller values produce finer
-grids)}
+grids).}
 
-\item{outputlevel}{determines amount of output [0=just fitted g;
-1=also PosteriorMean and PosteriorSD; 2= everything usually
-needed; 3=also include results of mixture fitting procedure
-(includes matrix of log-likelihoods used to fit mixture); 4=
-output additional things required by flash (flash.data)]}
+\item{outputlevel}{determines amount of output [\code{0} = just
+fitted g; \code{1} = also PosteriorMean and PosteriorSD;
+\code{2} = everything usually needed; \code{3} = also include
+results of mixture fitting procedure (includes matrix of
+log-likelihoods used to fit mixture).}
 
 \item{g}{the prior distribution for beta (usually estimated from
 the data; this is used primarily in simulated data to do
 computations with the "true" g)}
 
-\item{fixg}{if TRUE, don't estimate g but use the specified g -
-useful for computations under the "true" g in simulations}
+\item{fixg}{if \code{TRUE}, don't estimate g but use the specified
+g - useful for computations under the "true" g in simulations}
 
-\item{model}{c("EE","ET") specifies whether to assume exchangeable
-effects (EE) or exchangeable T stats (ET).}
+\item{model}{\code{c("EE","ET")} specifies whether to assume
+exchangeable effects (EE) or exchangeable T stats (ET).}
 
 \item{control}{A list of control parameters for the optmization
-algorithm. Default value is set to be control.default=list(K =
-1, method=3, square=TRUE, step.min0=1, step.max0=1, mstep=4,
-kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE). User
-may supply changes to this list of parameter, say,
-control=list(maxiter=10000,trace=TRUE)}
+algorithm. Default value is set to be \code{control.default =
+list(K = 1, method = 3, square = TRUE, step.min0 = 1, step.max0
+= 1, mstep = 4, kr = 1, objfn.inc = 1, tol = 1.e-07, maxiter =
+5000, trace = FALSE)}. User may supply changes to this list of
+parameter, say, \code{control = list(maxiter = 10000, trace =
+TRUE)}.}
 }
 \value{
-stramash returns an object of \code{\link[base]{class}} "stramash", a list
+stramash returns an object of \code{\link[base]{class}} "ash", a list
 with some or all of the following elements (determined by outputlevel) \cr
 \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 \item{loglik}{log P(D|mle(pi))}
@@ -134,16 +142,17 @@ included if outputlevel>2)}
 matrix of component log-likelihoods used in this optimization}
 }
 \description{
-Takes vectors of estimates (betahat) and their
-    standard errors (sebetahat), and applies shrinkage to them,
+Takes vectors of estimates (\code{betahat}) and their
+    standard errors (\code{sebetahat}) or a list of mixture error
+    distributions (\code{errordist}), and applies shrinkage to them,
     using Empirical Bayes methods, to compute shrunk estimates for
     beta. This is the more detailed version of stramash for "research"
-    use.  Most users will be happy with the stramash function, which
+    use. Most users will be happy with the \code{\link{stramash}} function, which
     provides the same usage, but documents only the main options
     for simplicity.
 }
 \details{
-See readme for more details.
+See README.md for more details.
 }
 \examples{
 beta = c(rep(0, 100), stats::rnorm(100))

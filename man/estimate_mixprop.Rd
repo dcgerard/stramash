@@ -9,34 +9,45 @@ estimate_mixprop(betahat, g, prior, optmethod = c("mixEM", "mixVBEM",
   errordist = NULL)
 }
 \arguments{
-\item{betahat}{(n vector of observations)}
+\item{betahat}{a p vector of estimates}
 
 \item{g}{the prior distribution for beta (usually estimated from
-the data}
+the data; this is used primarily in simulated data to do
+computations with the "true" g)}
 
 \item{prior}{string, or numeric vector indicating Dirichlet prior
-on mixture proportions (defaults to "uniform", or (1,1...,1);
-also can be "nullbiased" (nullweight,1,...,1) to put more
-weight on first component)}
+on mixture proportions (defaults to \code{"uniform"}, or
+\eqn{(1,1...,1)}; also can be \code{"nullbiased"}
+\eqn{(nullweight,1,...,1)} to put more weight on first
+component), or \code{"unit"} \eqn{(1/K,...,1/K)} [for
+\code{optmethod = mixVBEM} version only]}
 
-\item{optmethod}{name of function to use to do optimization}
+\item{optmethod}{specifies optimization method used. Default is
+\code{"mixIP"}, an interior point method, if REBayes is
+installed; otherwise an EM algorithm is used. The interior
+point method is faster for large problems (n>2000).}
 
 \item{null.comp}{the position of the null component}
 
 \item{df}{appropriate degrees of freedom for (t) distribution of
-betahat/sebetahat, default is NULL(Gaussian)}
+betahat/sebetahat if \code{likelihood = "t"}.}
 
-\item{control}{A list of control parameters for the SQUAREM
-algorithm, default value is set to be control.default=list(K =
-1, method=3, square=TRUE, step.min0=1, step.max0=1, mstep=4,
-kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE).}
+\item{control}{A list of control parameters for the optmization
+algorithm. Default value is set to be \code{control.default =
+list(K = 1, method = 3, square = TRUE, step.min0 = 1, step.max0
+= 1, mstep = 4, kr = 1, objfn.inc = 1, tol = 1.e-07, maxiter =
+5000, trace = FALSE)}. User may supply changes to this list of
+parameter, say, \code{control = list(maxiter = 10000, trace =
+TRUE)}.}
 
-\item{errordist}{A list of objects of either class \code{normalmix}
-or \code{unimix}. The length of this list must be the length of
-\code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
-distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-which case \code{stramash.workhorse} will assume either a
-normal or t likelihood, depending on the value for \code{df}.}
+\item{errordist}{A list of objects of either class
+\code{\link[ashr]{normalmix}} or
+\code{\link[ashr]{unimix}}. The length of this list must be the
+length of \code{betahat}. Note that \code{errordist[[i]]} is
+the \eqn{i}th error distribution of \code{betahat[i]}. Defaults
+to \code{NULL}, in which case \code{stramash.workhorse} will
+assume either a normal, t, or Laplace likelihood, depending on
+the value for \code{likelihood}.}
 }
 \value{
 A list, including the final loglikelihood, the null

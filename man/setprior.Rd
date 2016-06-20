@@ -2,7 +2,8 @@
 % Please edit documentation in R/stramash.R
 \name{setprior}
 \alias{setprior}
-\title{This is a copy from the ashr package because it is not exported and I need it.}
+\title{This is a copy from the ashr package because it is not exported and
+I need it.}
 \usage{
 setprior(prior, k, nullweight, null.comp)
 }
@@ -17,6 +18,7 @@ setprior(prior, k, nullweight, null.comp)
 \item{null.comp}{The position of the null component.}
 }
 \description{
-This is a copy from the ashr package because it is not exported and I need it.
+This is a copy from the ashr package because it is not exported and
+I need it.
 }
 

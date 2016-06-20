@@ -2,11 +2,11 @@
 % Please edit documentation in R/stramash.R
 \name{toc}
 \alias{toc}
-\title{From teh ashr package because not exported but I need it.}
+\title{From the ashr package because not exported but I need it.}
 \usage{
 toc()
 }
 \description{
-From teh ashr package because not exported but I need it.
+From the ashr package because not exported but I need it.
 }
 

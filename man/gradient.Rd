@@ -12,8 +12,8 @@ is the contribution to the likelihood of the \eqn{i}th
 observation and the \eqn{j}th component.}
 }
 \value{
-The kth element of this vector is the derivative
-    of the loglik for \eqn{\pi=(\pi_0,...,1-\pi_0,...)} with respect to
+The kth element of this vector is the derivative of the
+    loglik for \eqn{\pi=(\pi_0,...,1-\pi_0,...)} with respect to
     \eqn{\pi_0} at \eqn{\pi_0 = 1}.
 }
 \description{

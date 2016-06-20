@@ -12,30 +12,34 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("completeobs",
 
 #' @title Main Adaptive Shrinkage function
 #'
-#' @description Takes vectors of estimates (betahat) and their
-#'     standard errors (sebetahat), and applies shrinkage to them,
-#'     using Empirical Bayes methods, to compute shrunk estimates for
-#'     beta.
+#' @description Takes vectors of estimates (\code{betahat}) and their
+#'     standard errors (\code{sebetahat}) or a list of mixture error
+#'     distributions (\code{errordist}), and applies shrinkage to
+#'     them, using Empirical Bayes methods, to compute shrunk
+#'     estimates for beta.
 #'
 #' @details This function is actually just a simple wrapper that
 #'     passes its parameters to \code{\link{stramash.workhorse}} which
-#'     provides more documented options for advanced use. See readme
-#'     for more details.
+#'     provides more documented options for advanced use. See
+#'     README.md for more details.
 #'
 #' @param betahat a p vector of estimates
 #' @param sebetahat a p vector of corresponding standard errors
-#' @param errordist A list of objects of either class \code{normalmix}
-#'     or \code{unimix}. The length of this list must be the length of
-#'     \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
-#'     distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-#'     which case \code{stramash.workhorse} will assume either a
-#'     normal or t likelihood, depending on the value for \code{df}.
+#' @param errordist A list of objects of either class
+#'     \code{\link[ashr]{normalmix}} or
+#'     \code{\link[ashr]{unimix}}. The length of this list must be the
+#'     length of \code{betahat}. Note that \code{errordist[[i]]} is
+#'     the \eqn{i}th error distribution of \code{betahat[i]}. Defaults
+#'     to \code{NULL}, in which case \code{stramash.workhorse} will
+#'     assume either a normal, t, or Laplace likelihood, depending on
+#'     the value for \code{likelihood}.
 #' @param mixcompdist distribution of components in mixture
-#'     ("uniform","halfuniform" or "normal"; "+uniform" or
-#'     "-uniform"), the default is "uniform". If you believe your
-#'     effects may be asymmetric, use "halfuniform". If you want to
-#'     allow only positive/negative effects use "+uniform"/"-uniform".
-#'     The use of "normal" is permitted only if df=NULL.
+#'     (\code{"uniform"}, \code{"halfuniform"}, \code{"normal"},
+#'     \code{"+uniform"}, or \code{"-uniform"}), the default is
+#'     \code{"uniform"}. If you believe your effects may be
+#'     asymmetric, use \code{"halfuniform"}. If you want to allow only
+#'     positive/negative effects use
+#'     \code{"+uniform"}/\code{"-uniform"}.
 #' @param df appropriate degrees of freedom for (t) distribution of
 #'     betahat/sebetahat if \code{likelihood = "t"}.
 #' @param likelihood One of the pre-specified likelihoods
@@ -45,7 +49,7 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("completeobs",
 #'     \code{\link{stramash.workhorse}}.
 #'
 #' @return stramash returns an object of \code{\link[base]{class}}
-#'     "stramash", a list with some or all of the following elements
+#'     "\code{ash}", a list with some or all of the following elements
 #'     (determined by outputlevel) \cr
 #' \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 #' \item{loglik}{log P(D|mle(pi))}
@@ -89,84 +93,72 @@ stramash <- function(betahat, errordist = NULL, sebetahat = NULL,
 
 #' @title Detailed Adaptive Shrinkage function
 #'
-#' @description Takes vectors of estimates (betahat) and their
-#'     standard errors (sebetahat), and applies shrinkage to them,
+#' @description Takes vectors of estimates (\code{betahat}) and their
+#'     standard errors (\code{sebetahat}) or a list of mixture error
+#'     distributions (\code{errordist}), and applies shrinkage to them,
 #'     using Empirical Bayes methods, to compute shrunk estimates for
 #'     beta. This is the more detailed version of stramash for "research"
-#'     use.  Most users will be happy with the stramash function, which
+#'     use. Most users will be happy with the \code{\link{stramash}} function, which
 #'     provides the same usage, but documents only the main options
 #'     for simplicity.
 #'
-#' @details See readme for more details.
+#' @details See README.md for more details.
 #'
-#' @param betahat a p vector of estimates
-#' @param sebetahat a p vector of corresponding standard errors
+#' @inheritParams stramash
 #' @param method specifies how stramash is to be run. Can be
-#'     "shrinkage" (if main aim is shrinkage) or "fdr" (if main aim is
-#'     to assess fdr or fsr) This is simply a convenient way to
-#'     specify certain combinations of parameters: "shrinkage" sets
-#'     pointmass=FALSE and prior="uniform"; "fdr" sets pointmass=TRUE
-#'     and prior="nullbiased".
-#' @param mixcompdist distribution of components in mixture (
-#'     "uniform","halfuniform","normal" or "+uniform"), the default
-#'     value is "uniform" use "halfuniform" to allow for assymetric g,
-#'     and "+uniform"/"-uniform" to constrain g to be
-#'     positive/negative.
+#'     \code{"shrinkage"} (if main aim is shrinkage) or \code{"fdr"}
+#'     (if main aim is to assess fdr or fsr) This is simply a
+#'     convenient way to specify certain combinations of parameters:
+#'     \code{"shrinkage"} sets \code{pointmass = FALSE} and
+#'     \code{prior = "uniform"}; \code{"fdr"} sets \code{pointmass =
+#'     TRUE} and \code{prior = "nullbiased"}.
 #' @param optmethod specifies optimization method used. Default is
-#'     "mixIP", an interior point method, if REBayes is installed;
-#'     otherwise an EM algorithm is used. The interior point method is
-#'     faster for large problems (n>2000).
-#' @param df appropriate degrees of freedom for (t) distribution of
-#'     betahat/sebetahat, default is NULL(Gaussian)
+#'     \code{"mixIP"}, an interior point method, if REBayes is
+#'     installed; otherwise an EM algorithm is used. The interior
+#'     point method is faster for large problems (n>2000).
 #' @param nullweight scalar, the weight put on the prior under
-#'     "nullbiased" specification, see \code{prior}
+#'     \code{"nullbiased"} specification, see \code{prior}
 #' @param randomstart logical, indicating whether to initialize EM
-#'     randomly. If FALSE, then initializes to prior mean (for EM
-#'     algorithm) or prior (for VBEM)
+#'     randomly. If \code{FALSE}, then initializes to prior mean (for
+#'     EM algorithm) or prior (for VBEM)
 #' @param nonzeromode logical, indicating whether to use a non-zero
-#'     unimodal mixture(default is "FALSE")
+#'     unimodal mixture(default is \code{FALSE})
 #' @param pointmass logical, indicating whether to use a point mass at
 #'     zero as one of components for a mixture distribution
 #' @param prior string, or numeric vector indicating Dirichlet prior
-#'     on mixture proportions (defaults to "uniform", or (1,1...,1);
-#'     also can be "nullbiased" (nullweight,1,...,1) to put more
-#'     weight on first component), or "unit" (1/K,...,1/K) [for
-#'     optmethod=mixVBEM version only]
-#' @param mixsd vector of sds for underlying mixture components
+#'     on mixture proportions (defaults to \code{"uniform"}, or
+#'     \eqn{(1,1...,1)}; also can be \code{"nullbiased"}
+#'     \eqn{(nullweight,1,...,1)} to put more weight on first
+#'     component), or \code{"unit"} \eqn{(1/K,...,1/K)} [for
+#'     \code{optmethod = mixVBEM} version only]
+#' @param mixsd vector of standard deviations for underlying mixture
+#'     components for the prior.
 #' @param gridmult the multiplier by which the default grid values for
 #'     mixsd differ by one another. (Smaller values produce finer
-#'     grids)
-#' @param outputlevel determines amount of output [0=just fitted g;
-#'     1=also PosteriorMean and PosteriorSD; 2= everything usually
-#'     needed; 3=also include results of mixture fitting procedure
-#'     (includes matrix of log-likelihoods used to fit mixture); 4=
-#'     output additional things required by flash (flash.data)]
+#'     grids).
+#' @param outputlevel determines amount of output [\code{0} = just
+#'     fitted g; \code{1} = also PosteriorMean and PosteriorSD;
+#'     \code{2} = everything usually needed; \code{3} = also include
+#'     results of mixture fitting procedure (includes matrix of
+#'     log-likelihoods used to fit mixture).
 #' @param g the prior distribution for beta (usually estimated from
 #'     the data; this is used primarily in simulated data to do
 #'     computations with the "true" g)
-#' @param fixg if TRUE, don't estimate g but use the specified g -
-#'     useful for computations under the "true" g in simulations
-#' @param model c("EE","ET") specifies whether to assume exchangeable
-#'     effects (EE) or exchangeable T stats (ET).
+#' @param fixg if \code{TRUE}, don't estimate g but use the specified
+#'     g - useful for computations under the "true" g in simulations
+#' @param model \code{c("EE","ET")} specifies whether to assume
+#'     exchangeable effects (EE) or exchangeable T stats (ET).
 #' @param control A list of control parameters for the optmization
-#'     algorithm. Default value is set to be control.default=list(K =
-#'     1, method=3, square=TRUE, step.min0=1, step.max0=1, mstep=4,
-#'     kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE). User
-#'     may supply changes to this list of parameter, say,
-#'     control=list(maxiter=10000,trace=TRUE)
-#' @param errordist A list of objects of either class \code{normalmix}
-#'     or \code{unimix}. The length of this list must be the length of
-#'     \code{betahat}. \code{errordist[[i]]} is the \eqn{i}th error
-#'     distribution of \code{betahat[i]}. Defaults to \code{NULL}, in
-#'     which case \code{stramash.workhorse} will assume either a
-#'     normal or t likelihood, depending on the value for \code{df}.
-#' @param likelihood One of the pre-specified likelihoods
-#'     available. So far, they are \code{"normal"}, \code{"t"}, and
-#'     \code{"laplace"}.
+#'     algorithm. Default value is set to be \code{control.default =
+#'     list(K = 1, method = 3, square = TRUE, step.min0 = 1, step.max0
+#'     = 1, mstep = 4, kr = 1, objfn.inc = 1, tol = 1.e-07, maxiter =
+#'     5000, trace = FALSE)}. User may supply changes to this list of
+#'     parameter, say, \code{control = list(maxiter = 10000, trace =
+#'     TRUE)}.
 #' @param gridsize The size of the grid if you are using one of the
 #'     pre-specified likelihoods.
 #'
-#' @return stramash returns an object of \code{\link[base]{class}} "stramash", a list
+#' @return stramash returns an object of \code{\link[base]{class}} "ash", a list
 #' with some or all of the following elements (determined by outputlevel) \cr
 #' \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 #' \item{loglik}{log P(D|mle(pi))}
@@ -273,7 +265,7 @@ stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
         }
         for (index in 1:length(betahat)) {
             errordist[[index]] <- t_to_mix(mu = 0, sig = sebetahat[index],
-                                           df = df[index], gridsize = 70)
+                                           df = df[index], gridsize = gridsize)
         }
     } else if (likelihood == "normal" & is.null(errordist) & !is.null(sebetahat)) {
         errordist <- list()
@@ -282,7 +274,8 @@ stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
         }
     } else if (likelihood == "laplace" & is.null(errordist) & !is.null(sebetahat)) {
         for (index in 1:length(betahat)) {
-            errordist[[index]] <- laplace_to_mix(mu = 0, sig = sebetahat[index])
+            errordist[[index]] <- laplace_to_mix(mu = 0, sig = sebetahat[index],
+                                                 gridsize = gridsize)
 
         }
     }
@@ -503,22 +496,8 @@ stramash.workhorse <- function(betahat, errordist = NULL, sebetahat = NULL,
 
 #' Estimate mixture proportions of sigmaa by EM algorithm
 #'
-#' @param betahat (n vector of observations)
-#' @param g the prior distribution for beta (usually estimated from
-#'     the data
-#' @param prior string, or numeric vector indicating Dirichlet prior
-#'     on mixture proportions (defaults to "uniform", or (1,1...,1);
-#'     also can be "nullbiased" (nullweight,1,...,1) to put more
-#'     weight on first component)
-#' @param null.comp the position of the null component
-#' @param optmethod name of function to use to do optimization
-#' @param df appropriate degrees of freedom for (t) distribution of
-#'     betahat/sebetahat, default is NULL(Gaussian)
-#' @param control A list of control parameters for the SQUAREM
-#'     algorithm, default value is set to be control.default=list(K =
-#'     1, method=3, square=TRUE, step.min0=1, step.max0=1, mstep=4,
-#'     kr=1, objfn.inc=1,tol=1.e-07, maxiter=5000, trace=FALSE).
 #' @inheritParams stramash.workhorse
+#' @param null.comp the position of the null component
 #' @return A list, including the final loglikelihood, the null
 #'     loglikelihood, a n by k likelihoodmatrix with (j,k)th element
 #'     equal to \eqn{f_k(x_j)},and a flag to indicate convergence.
@@ -621,7 +600,8 @@ autoselect.mixsd <- function (betahat, sebetahat, mult) {
     }
 }
 
-#' This is a copy from the ashr package because it is not exported and I need it.
+#' This is a copy from the ashr package because it is not exported and
+#' I need it.
 #'
 #' @param prior Either \code{"nullbiased"}, \code{"uniform"}, or
 #'     \code{"unit"}.
@@ -680,8 +660,8 @@ normalize <- function (x) {
 #'     is the contribution to the likelihood of the \eqn{i}th
 #'     observation and the \eqn{j}th component.
 #'
-#' @return The kth element of this vector is the derivative
-#'     of the loglik for \eqn{\pi=(\pi_0,...,1-\pi_0,...)} with respect to
+#' @return The kth element of this vector is the derivative of the
+#'     loglik for \eqn{\pi=(\pi_0,...,1-\pi_0,...)} with respect to
 #'     \eqn{\pi_0} at \eqn{\pi_0 = 1}.
 gradient <- function (matrix_lik) {
     n <- nrow(matrix_lik)
@@ -736,7 +716,7 @@ tic <- function (gcFirst = TRUE, type = c("elapsed", "user.self", "sys.self")) {
     invisible(tic)
 }
 
-#' From teh ashr package because not exported but I need it.
+#' From the ashr package because not exported but I need it.
 #'
 #'
 toc <- function() {
