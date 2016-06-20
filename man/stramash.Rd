@@ -37,7 +37,9 @@ infinity (Gaussian)}
 \code{\link{stramash.workhorse}}.}
 }
 \value{
-stramash returns an object of \code{\link[base]{class}} "stramash", a list with some or all of the following elements (determined by outputlevel) \cr
+stramash returns an object of \code{\link[base]{class}}
+    "stramash", a list with some or all of the following elements
+    (determined by outputlevel) \cr
 \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 \item{loglik}{log P(D|mle(pi))}
 \item{logLR}{log[P(D|mle(pi))/P(D|beta==0)]}
@@ -76,31 +78,17 @@ This function is actually just a simple wrapper that
     for more details.
 }
 \examples{
-beta = c(rep(0,100),rnorm(100))
-sebetahat = abs(rnorm(200,0,1))
-betahat = rnorm(200,beta,sebetahat)
+beta = c(rep(0, 100), stats::rnorm(100))
+sebetahat = abs(stats::rnorm(200, 0, 1))
+betahat = stats::rnorm(200, beta, sebetahat)
 beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
 summary(beta.stramash)
 names(beta.stramash)
-graphics::plot(betahat,beta.stramash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
+graphics::plot(betahat, beta.stramash$PosteriorMean, xlim = c(-4, 4), ylim = c(-4, 4))
 
-CIMatrix=stramashci(beta.stramash,level=0.95)
-print(CIMatrix)
-
-#Illustrating the non-zero mode feature
-betahat=betahat+5
-beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
-graphics::plot(betahat,beta.stramash$PosteriorMean)
-summary(beta.stramash)
 }
 \seealso{
 \code{\link{stramash.workhorse}} for complete specification of
     stramash function
-
-\code{\link{stramashci}} for computation of credible intervals
-    after getting the stramash object return by \code{stramash()}
-
-\code{\link{stramashm}} for Multi-model Adaptive Shrinkage
-    function
 }
 

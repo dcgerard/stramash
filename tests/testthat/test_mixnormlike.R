@@ -10,7 +10,7 @@ test_that("estimate_mixprop correctly handles mixtures of normals likelihood", {
     ## assumed likelihood
     pi_vals  <- c(0.5, 0.3, 0.2)
     mean_seq <- c(0, 0, 0)
-    sd_seq   <- c(0, 1 , 2)
+    sd_seq   <- c(0, 1, 2)
 
     errordist <- list()
     for (index in 1:p) {
@@ -27,7 +27,7 @@ test_that("log_compdens_conv_mix.normalnormal function works", {
     ## assumed likelihood
     pi_vals  <- c(0.5, 0.3, 0.2)
     mean_seq <- c(0, 0, 0)
-    sd_seq   <- c(0.5, 1 , 2)
+    sd_seq   <- c(0.5, 1, 2)
     errordist <- list()
     for (index in 1:p) {
         errordist[[index]] <- normalmix(pi = pi_vals, mean = mean_seq, sd = sd_seq)
@@ -53,7 +53,7 @@ test_that("log_compdens_conv_mix.normalnormal function works", {
 
     lout1 <- log_compdens_conv_mix.normalnormal(g = g, betahat = betahat,
                                                 errordist = errordist)
-    lout2 <-log_compdens_conv.normalmix(m = g, x = betahat, s = sd_seq, v = NULL)
+    lout2 <- ashr:::log_compdens_conv.normalmix(m = g, x = betahat, s = sd_seq, v = NULL)
     expect_equal(lout1, lout2)
 
     ## test point mass at zero where I know results

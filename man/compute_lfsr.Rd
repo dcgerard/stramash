@@ -2,7 +2,7 @@
 % Please edit documentation in R/stramash.R
 \name{compute_lfsr}
 \alias{compute_lfsr}
-\title{Function to compute the local false sign rate}
+\title{Function to compute the local false sign rate.}
 \usage{
 compute_lfsr(NegativeProb, ZeroProb)
 }
@@ -17,6 +17,6 @@ zero.}
 The local false sign rate.
 }
 \description{
-Function to compute the local false sign rate
+Copied from the ashr package.
 }
 

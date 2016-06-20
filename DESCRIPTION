@@ -1,7 +1,7 @@
 Package: stramash
 Maintainer: David Gerard <dcgerard@uchicago.edu>
-Author:  David Gerard, Matthew Stephens, Chaoxing Dai, Mengyin Lu, Nan Xiao
-Version: 1.2.4
+Author: David Gerard
+Version: 1.0.0
 License: GPL-3
 Title: STRAMASH: Specifying The Right Amount of Mixture-likelihood for Adaptive SHrinkage
 Description: This package is similar to the ashr package, but
@@ -21,8 +21,8 @@ Imports:
     Rcpp (>= 0.10.5),
     hypergeo,
     foreach,
-    VGAM
-LinkingTo: Rcpp
+    VGAM,
+    ashr
 Suggests:
     REBayes,
     testthat,

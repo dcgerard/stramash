@@ -118,21 +118,31 @@ with some or all of the following elements (determined by outputlevel) \cr
 \item{fitted.g}{fitted mixture, either a normalmix or unimix}
 \item{loglik}{log P(D|mle(pi))}
 \item{logLR}{log[P(D|mle(pi))/P(D|beta==0)]}
-\item{PosteriorMean}{A vector consisting the posterior mean of beta from the mixture}
-\item{PosteriorSD}{A vector consisting the corresponding posterior standard deviation}
-\item{PositiveProb}{A vector of posterior probability that beta is positive}
-\item{NegativeProb}{A vector of posterior probability that beta is negative}
-\item{ZeroProb}{A vector of posterior probability that beta is zero}
+\item{PosteriorMean}{A vector consisting the posterior mean of beta
+from the mixture}
+\item{PosteriorSD}{A vector consisting the corresponding posterior
+standard deviation}
+\item{PositiveProb}{A vector of posterior probability that beta is
+positive}
+\item{NegativeProb}{A vector of posterior probability that beta is
+negative}
+\item{ZeroProb}{A vector of posterior probability that beta is
+zero}
 \item{lfsr}{The local false sign rate}
 \item{lfdr}{A vector of estimated local false discovery rate}
 \item{qvalue}{A vector of q values}
 \item{svalue}{A vector of s values}
-\item{call}{a call in which all of the specified arguments are specified by their full names}
-\item{excludeindex}{the vector of index of observations with 0 standard error; if none, then returns NULL}
-\item{model}{either "EE" or "ET", denoting whether exchangeable effects (EE) or exchangeable T stats (ET) has been used}
+\item{call}{a call in which all of the specified arguments are
+specified by their full names}
+\item{excludeindex}{the vector of index of observations with 0
+standard error; if none, then returns NULL}
+\item{model}{either "EE" or "ET", denoting whether exchangeable
+effects (EE) or exchangeable T stats (ET) has been used}
 \item{optmethod}{the optimization method used}
-\item{data}{a list consisting the input betahat and sebetahat (only included if outputlevel>2)}
-\item{fit}{a list containing results of mixture optimization, and matrix of component log-likelihoods used in this optimization}
+\item{data}{a list consisting the input betahat and sebetahat (only
+included if outputlevel>2)}
+\item{fit}{a list containing results of mixture optimization, and
+matrix of component log-likelihoods used in this optimization}
 }
 \description{
 Takes vectors of estimates (betahat) and their
@@ -147,43 +157,34 @@ Takes vectors of estimates (betahat) and their
 See readme for more details.
 }
 \examples{
-beta = c(rep(0,100),rnorm(100))
-sebetahat = abs(rnorm(200,0,1))
-betahat = rnorm(200,beta,sebetahat)
+beta = c(rep(0, 100), stats::rnorm(100))
+sebetahat = abs(stats::rnorm(200, 0, 1))
+betahat = stats::rnorm(200, beta, sebetahat)
 beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
 names(beta.stramash)
 summary(beta.stramash)
 head(as.data.frame(beta.stramash))
-graphics::plot(betahat,beta.stramash$PosteriorMean,xlim=c(-4,4),ylim=c(-4,4))
+graphics::plot(betahat, beta.stramash$PosteriorMean, xlim=c(-4, 4), ylim=c(-4, 4))
 
-CIMatrix=stramashci(beta.stramash,betahat,sebetahat,level=0.95)
-print(CIMatrix)
-
-#Testing the non-zero mode feature
-betahat=betahat+5
+## Testing the non-zero mode feature
+betahat = betahat + 5
 beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat)
-graphics::plot(betahat,beta.stramash$PosteriorMean)
+graphics::plot(betahat, beta.stramash$PosteriorMean)
 summary(beta.stramash)
 
-#'
-#Running stramash with a pre-specified g, rather than estimating it
-beta = c(rep(0,100),rnorm(100))
-sebetahat = abs(rnorm(200,0,1))
-betahat = rnorm(200,beta,sebetahat)
-true_g = normalmix(c(0.5,0.5),c(0,0),c(0,1)) # define true g
+## Running stramash with a pre-specified g, rather than estimating it
+beta = c(rep(0, 100), stats::rnorm(100))
+sebetahat = abs(stats::rnorm(200, 0, 1))
+betahat = stats::rnorm(200, beta, sebetahat)
+true_g = ashr::normalmix(c(0.5, 0.5), c(0, 0), c(0, 1)) # define true g
 ## Passing this g into stramash causes it to
 ## i) take the sd and the means for each component from this g, and
 ## ii) initialize pi to the value from this g.
-beta.stramash = stramash.workhorse(betahat = betahat, sebetahat =  sebetahat,g=true_g,fixg=TRUE)
+beta.stramash = stramash.workhorse(betahat = betahat, sebetahat = sebetahat,
+                                   g = true_g, fixg = TRUE)
 }
 \seealso{
-\code{\link{stramash}} for simplified specification of stramash
-    function
-
-\code{\link{stramashci}} for computation of credible intervals
-    after getting the stramash object return by \code{stramash()}
-
-\code{\link{stramashm}} for Multi-model Adaptive Shrinkage
-    function
+\code{\link{stramash}} for simplified specification of
+    stramash function
 }
 

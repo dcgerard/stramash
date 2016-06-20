@@ -177,7 +177,7 @@ nuconv_dense <- function(g, errordist, x) {
 
     diff_vec <- 1 / (errordist$b - errordist$a)
 
-    like_vals <- log(colSums((diff_vec * errordist$pi) * t(exp(lp1_sub) - exp(lp2_sub)))) +
+    like_vals <- log(colSums( (diff_vec * errordist$pi) * t(exp(lp1_sub) - exp(lp2_sub)))) +
         max_log
 
     ## deal with place where point mass at zero
@@ -246,7 +246,7 @@ unconv_dense <- function(g, errordist, x) {
 
     diff_vec <- 1 / (g$b - g$a)
 
-    like_vals <- log(colSums((errordist$pi) * t(exp(lp1_sub) - exp(lp2_sub)))) +
+    like_vals <- log(colSums( (errordist$pi) * t(exp(lp1_sub) - exp(lp2_sub)))) +
         max_log + log(diff_vec)
 
     ## deal with values where prior is point mass on zero.
@@ -413,7 +413,7 @@ post_mix_dist.normalnormal <- function(g, betahat, errordist) {
     for (seindex in 1:n) {
         cerr  <- errordist[[seindex]]
         cmean <- outer(g$mean, cerr$mean, FUN = "+")
-        csd   <- sqrt(outer(g$sd ^ 2, cerr$sd ^2, FUN = "+"))
+        csd   <- sqrt(outer(g$sd ^ 2, cerr$sd ^ 2, FUN = "+"))
         carray[seindex, , ] <- stats::dnorm(x = betahat[seindex], mean = cmean, sd = csd)
     }
 
@@ -704,7 +704,7 @@ mix_mean_array.truncnormalmix_array <- function(mixdist) {
     return(outvec)
 }
 mix_mean_array.unimix_array <- function(mixdist) {
-    return(apply((mixdist$upper + mixdist$lower) / 2 * mixdist$weights, 1, sum))
+    return(apply( (mixdist$upper + mixdist$lower) / 2 * mixdist$weights, 1, sum))
 }
 
 #' Compute the probability of zero.
@@ -774,7 +774,7 @@ mix_sd_array.truncnormalmix_array <- function(mixdist) {
     ## postmeans <- array(postmeans, dim = dim(mixdist$means))
 
     postvars <- (1 + (alpha * stats::dnorm(alpha) - beta * stats::dnorm(beta)) / Z -
-                 ((stats::dnorm(alpha) - stats::dnorm(beta)) / Z) ^ 2) * mixdist$variances
+                 ( (stats::dnorm(alpha) - stats::dnorm(beta)) / Z) ^ 2) * mixdist$variances
     postvars[which_pointmass] <- 0
 
     ## truncnorm method

@@ -4,15 +4,12 @@
 \alias{estimate_mixprop}
 \title{Estimate mixture proportions of sigmaa by EM algorithm}
 \usage{
-estimate_mixprop(betahat, sebetahat, g, prior, optmethod = c("mixEM",
-  "mixVBEM", "cxxMixSquarem", "mixIP"), null.comp = 1, df = NULL,
-  control = list(), errordist = NULL)
+estimate_mixprop(betahat, g, prior, optmethod = c("mixEM", "mixVBEM",
+  "cxxMixSquarem", "mixIP"), null.comp = 1, df = NULL, control = list(),
+  errordist = NULL)
 }
 \arguments{
 \item{betahat}{(n vector of observations)}
-
-\item{sebetahat}{(n vector of standard errors/deviations of
-observations)}
 
 \item{g}{the prior distribution for beta (usually estimated from
 the data}
@@ -42,7 +39,9 @@ which case \code{stramash.workhorse} will assume either a normal or
 t likelihood, depending on the value for \code{df}.}
 }
 \value{
-A list, including the final loglikelihood, the null loglikelihood, a n by k likelihoodmatrix with (j,k)th element equal to \eqn{f_k(x_j)},and a flag to indicate convergence.
+A list, including the final loglikelihood, the null
+    loglikelihood, a n by k likelihoodmatrix with (j,k)th element
+    equal to \eqn{f_k(x_j)},and a flag to indicate convergence.
 }
 \description{
 Estimate mixture proportions of sigmaa by EM algorithm
