@@ -1009,6 +1009,38 @@ runimix <- function(n, mixdense) {
     return(samp)
 }
 
+#' Density function for mixture of uniforms.
+#'
+#' @param x The location to calculate the density.
+#' @param mixdense An object of class \code{unimix}.
+#'
+#' @author David Gerard
+#'
+#' @export
+dunimix <- function(x, mixdense) {
+    assertthat::are_equal(class(mixdense), "unimix")
+    dout <- colSums(sapply(X = x, FUN = stats::dunif,
+                           min = mixdense$a, max = mixdense$b) *
+                    mixdense$pi)
+    return(dout)
+}
+
+#' Probability function for mixture of uniforms.
+#'
+#' @param p The location to calculate the density.
+#' @param mixdense An object of class \code{unimix}.
+#'
+#' @author David Gerard
+#'
+#' @export
+punimix <- function(p, mixdense) {
+    assertthat::are_equal(class(mixdense), "unimix")
+    dout <- colSums(sapply(X = x, FUN = stats::punif,
+                           min = mixdense$a, max = mixdense$b) *
+                    mixdense$pi)
+    return(dout)
+}
+
 
 #' Standard deviation of either class \code{\link[ashr]{normalmix}} or
 #'     class \code{\link[ashr]{unimix}}
@@ -1058,4 +1090,24 @@ mixmean.normalmix <- function(m) {
 }
 mixmean.unimix <- function(m) {
     return(sum((m$a + m$b) / 2 * m$pi))
+}
+
+#' Approximate the density function of any distribution given its
+#' quantile function.
+#'
+#' @param q_func A quantile function.
+#' @param gridsize The number of points to approximate.
+#' @param eps A positive numeric. The tolerance from 0 or 1 to start
+#'     the grid.
+#'
+quantile_to_mix <- function(q_func, gridsize = 20, eps = 10 ^ -6) {
+    assertthat::assert_that(eps > 0)
+    assertthat::assert_that(is.function(q_func))
+    pgrid <- seq(eps, 1 - eps, length = gridsize + 1)
+    quants <- do.call(what = q_func, args = list(p = pgrid))
+    lower_vals <- quants[1:(length(quants) - 1)]
+    upper_vals <- quants[2:length(quants)]
+    weights <- rep(1 / gridsize, gridsize)
+    mixdense <- unimix(pi = weights, a = lower_vals, b = upper_vals)
+    return(mixdense)
 }

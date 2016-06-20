@@ -5,6 +5,8 @@ STRAMASH: Specifying The Right Amount of Mixture-likelihood for Adaptive SHrinka
 
 This package is similar to and depends on the `ashr` package (<https://github.com/stephens999/ashr>) but also allows the error distribution to be any mixture of normals or uniforms. See that link for details on the model.
 
+Right now, only using a mixture of uniforms as your error distribution is gauranteed to work properly.
+
 Installation
 ============
 
