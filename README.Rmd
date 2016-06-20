@@ -12,10 +12,10 @@ knitr::opts_chunk$set(
 )
 ```
 # STRAMASH: Specifying The Right Amount of Mixture-likelihood for Adaptive SHrinkage
-This package is the same as the `ashr` package
-[https://github.com/stephens999/ashr](https://github.com/stephens999/ashr)
+This package is similar to and depends on the `ashr` package
+([https://github.com/stephens999/ashr](https://github.com/stephens999/ashr))
 but also allows the error distrubiton to be any mixture of normals or
-uniforms. The that link for details on the model.
+uniforms. See that link for details on the model.
 
 # Installation
 To install, run the following code in R
