@@ -2,7 +2,7 @@
 % Please edit documentation in R/mix_like.R
 \name{post_mix_dist.normaluni}
 \alias{post_mix_dist.normaluni}
-\title{Normal-mixture - uniform-mixture posterior calculation.}
+\title{Normal-mixture (prior) - uniform-mixture (error) posterior calculation.}
 \usage{
 post_mix_dist.normaluni(g, betahat, errordist)
 }
@@ -15,7 +15,7 @@ or \code{"unimix"}.}
 \item{errordist}{A list of mixture distributions.}
 }
 \description{
-Normal-mixture - uniform-mixture posterior calculation.
+Normal-mixture (prior) - uniform-mixture (error) posterior calculation.
 }
 \author{
 David Gerard

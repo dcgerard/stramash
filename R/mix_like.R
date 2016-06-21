@@ -442,7 +442,7 @@ post_mix_dist.normalnormal <- function(g, betahat, errordist) {
     return(post_list)
 }
 
-#' Normal-mixture - uniform-mixture posterior calculation.
+#' Normal-mixture (prior) - uniform-mixture (error) posterior calculation.
 #'
 #'
 #' @inheritParams post_mix_dist
@@ -498,6 +498,8 @@ post_mix_dist.normaluni <- function(g, betahat, errordist) {
         upper_array[seindex, , ]     <- current_upper
     }
 
+    assertthat::assert_that(all(lower_array <= upper_array))
+    
     post_list <- list(weights = weights_array,
                       means = means_array,
                       variances = variances_array,
@@ -508,7 +510,7 @@ post_mix_dist.normaluni <- function(g, betahat, errordist) {
 }
 
 
-#' Uniform-mixture - normal-mixture posterior calculation.
+#' Uniform-mixture (prior) - normal-mixture (error) posterior calculation.
 #'
 #'
 #' @inheritParams post_mix_dist
@@ -635,9 +637,16 @@ post_mix_dist.uniuni <- function(g, betahat, errordist) {
                                             c(matrix(rep(g$b, Lj), nrow = K, byrow = FALSE))),
                                       1, min), nrow = K)
 
+        which_neg <- upper_current < lower_current
+
+        weights_array[seindex, , ][which_neg] <- 0
+        lower_current[which_neg] <- 42 ## arbitrary since have weight zero
+        upper_current[which_neg] <- 43
+        
+        assertthat::assert_that(abs(sum(weights_array[seindex, ,]) - 1) < 10 ^ -14) ## this will break it if above code actually does anything
+
         lower_array[seindex, , ] <- lower_current
         upper_array[seindex, , ] <- upper_current
-
 
         lower_array[seindex, which_pointmass, ] <- 0
         upper_array[seindex, which_pointmass, ] <- 0
@@ -694,12 +703,18 @@ mix_mean_array.truncnormalmix_array <- function(mixdist) {
     num[which_switch]  <- stats::dnorm(-alpha[which_switch]) - stats::dnorm(-beta[which_switch])
     postmeans <- mixdist$mean + num / Z * sdarray
     postmeans[which_pointmass] <- 0
+    
+    ## Stupid hack to deal with numerical instability. Might not be correct:
+    postmeans[is.nan(postmeans)] <- 0
+    postmeans[postmeans == Inf] <- 0
+    postmeans[postmeans == -Inf] <- 0
+    
     outvec <- apply(postmeans * mixdist$weights, 1, sum)
-
+    
     ## truncnorm method
-    ## postmeans <- truncnorm::etruncnorm(a = mixdist$lower, b = mixdist$upper,
+    ## postmeans2 <- truncnorm::etruncnorm(a = mixdist$lower, b = mixdist$upper,
     ##                                    mean = mixdist$means, sd = sqrt(mixdist$variances))
-    ## postmeans <- array(postmeans, dim = dim(mixdist$means))
+    ## postmeans2 <- array(postmeans2, dim = dim(mixdist$means))
 
     return(outvec)
 }
@@ -830,13 +845,21 @@ mix_cdf_array.truncnormalmix_array <- function(mixdist, q) {
     Z[which_switch]    <- stats::pnorm(-alpha[which_switch]) - stats::pnorm(-beta[which_switch])
     num[which_switch]  <- stats::pnorm(-alpha[which_switch]) - stats::pnorm(-xi[which_switch])
     pless <- num / Z
+    pless[q < mixdist$lower] <- 0
+    pless[q > mixdist$upper] <- 1
     pless[which_pointmass] <- (q >= 0) * 1
+    
+    ## stupid hack that needs to be fixed
+    pless[is.nan(pless)] <- 0
+    
+    assertthat::assert_that(all(!is.nan(pless)))
+    
 
     ## truncnorm package way
-    ## pless <- truncnorm::ptruncnorm(q = q, a = mixdist$lower, b = mixdist$upper,
+    ## pless1 <- truncnorm::ptruncnorm(q = q, a = mixdist$lower, b = mixdist$upper,
     ##                                mean = mixdist$means, sd = sqrt(mixdist$variances))
-    ## pless <- array(pless, dim = dim(mixdist$means))
-    ## pless[which_pointmass] <- (q >= 0) * 1
+    ## pless1 <- array(pless1, dim = dim(mixdist$means))
+    ## pless1[which_pointmass] <- (q >= 0) * 1
 
     return(apply(pless * mixdist$weights, 1, sum))
 }
@@ -1035,7 +1058,7 @@ dunimix <- function(x, mixdense) {
 #' @export
 punimix <- function(p, mixdense) {
     assertthat::are_equal(class(mixdense), "unimix")
-    dout <- colSums(sapply(X = x, FUN = stats::punif,
+    dout <- colSums(sapply(X = p, FUN = stats::punif,
                            min = mixdense$a, max = mixdense$b) *
                     mixdense$pi)
     return(dout)

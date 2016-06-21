@@ -63,20 +63,22 @@ test_that("t approximation is accurate", {
 
 
 test_that("general quantile to mix works", {
+    set.seed(101)
     mixdense <- quantile_to_mix(q_func = qnorm, gridsize = 1000)
     x <- seq(-8, 8, length = 100)
     y <- dunimix(x = x, mixdense = mixdense)
     z <- dnorm(x)
     expect_equal(y, z, tol = 10 ^ -2)
 
-    ## plot(x, y, type = "l")
-    ## lines(x, z, col = 2, lty = 2)
+    plot(x, y, type = "l")
+    lines(x, z, col = 2, lty = 2)
 
-    p <- 10
+    set.seed(51)
+    p <- 100
     beta <- rnorm(p)
-    betahat <- beta + 1 + rnorm(p)
+    betahat <- beta + rnorm(p)
 
-    mixdense <- quantile_to_mix(q_func = qnorm, gridsize = 100)
+    mixdense <- quantile_to_mix(q_func = qnorm, gridsize = 20)
     errordist <- list()
     for (index in 1:p) {
         errordist[[index]] <- mixdense
@@ -84,7 +86,12 @@ test_that("general quantile to mix works", {
     sout <- stramash.workhorse(betahat = betahat, errordist = errordist, mixcompdist = "normal")
     ash_out <- ashr::ash.workhorse(betahat = betahat, sebetahat = 1, mixcompdist = "normal")
 
-    sout$PosteriorMean
-    ash_out$PosteriorMean
+    plot(sout$lfdr, ash_out$lfdr)
+    abline(0, 1)
+
+    plot(ash_out$PosteriorMean, sout$PosteriorMean)
+    abline(0, 1)
+    plot(beta, sout$PosteriorMean)
+    plot(beta, ash_out$PosteriorMean)
 }
 )

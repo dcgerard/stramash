@@ -50,7 +50,7 @@ test_that("post_mix_dist.normaluni", {
     postout <- post_mix_dist.normaluni(g = g, betahat = betahat, errordist = errordist)
 
     expect_true(all(abs(apply(postout$weights, 1, sum) - 1) < 10 ^ -14))
-    meanout      <- mix_mean_array(postout)
+    meanout <- mix_mean_array(postout)
 
     ## truncnorm way to calculate means
     tpostmeans <- truncnorm::etruncnorm(a = postout$lower, b = postout$upper,
@@ -160,6 +160,12 @@ test_that("post_mix_dist.uniuni", {
     sdout        <- mix_sd_array(postout)
     pless        <- mix_cdf_array(postout, 0)
     expect_true(all(pless >= 0 & pless <= 1))
+
+    load("example_data.Rd")
+    g <- data_list$g
+    betahat <- data_list$betahat
+    errordist <- data_list$errordist
+    pout <- post_mix_dist.uniuni(g = g, betahat = betahat, errordist = errordist)
 }
 )
 
